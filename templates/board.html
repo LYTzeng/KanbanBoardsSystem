@@ -1,0 +1,161 @@
+{% extends 'basic/basic.html' %}
+{% load static %}
+
+{% block head_script %}
+<!-- jquery -->
+<script src="https://cdn.jsdelivr.net/gh/jqwidgets/jQWidgets@latest/scripts/jquery-1.11.1.min.js" ></script>
+<!-- jqwidgets -->
+<script src="https://cdn.jsdelivr.net/gh/jqwidgets/jQWidgets@latest/jqwidgets/jqxcore.js" ></script>
+<script src="https://cdn.jsdelivr.net/gh/jqwidgets/jQWidgets@latest/jqwidgets/jqxsortable.js" ></script>
+<script src="https://cdn.jsdelivr.net/gh/jqwidgets/jQWidgets@latest/jqwidgets/jqxkanban.js" ></script>
+<script src="https://cdn.jsdelivr.net/gh/jqwidgets/jQWidgets@latest/jqwidgets/jqxdata.js" ></script>
+<!-- d3.js -->
+<script src="{% static 'js/d3.v4.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/d3-scale-chromatic.v1.min.js' %}"></script>
+{% endblock %}
+
+{% block stylesheet %}
+<!-- jqwidgets樣式 -->
+<link type="text/css" rel="stylesheet" href="{% static 'css/jqwidgets/styles/jqx.base.css' %}"/>
+<link type="text/css" rel="stylesheet" href="{% static 'css/jqwidgets/styles/jqx.light.css' %}"/>
+<style>
+    #sidenav {
+        height: 100vh;
+        width: 200px;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #505050;
+        transition: 0.5s;
+        padding-top: 20px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    ul {
+        list-style: none;
+    }
+        ul > .title {
+            color: rgb(184, 184, 184);
+            font-size: 17px;
+        }
+            ul > div > .list {
+                color: #9b9b9b;
+                font-size: 16px;
+                line-height: 30px;
+            }
+    #nav-opener {
+        z-index: 99;
+        width:5px;
+        height:40px;
+        padding:5px 5px 5px 5px;
+        position:absolute;
+        left:220px;
+        top:10px;
+        border-radius:0 4px 4px 0;
+        border-left:none;
+        cursor:pointer;
+        text-shadow:0 1px 0 white;
+        background:#505050;
+        -webkit-transition:all 0.25s ease;
+        -moz-transition:all 0.25s ease;
+        -o-transition:all 0.25s ease;
+        transition:all 0.25s ease
+    }
+        #nav-opener i {
+            display:inline-block;
+            position: absolute;
+            top:20%;
+            left:-25%;
+            -webkit-transition:all 0.25s ease;
+            -moz-transition:all 0.25s ease;
+            -o-transition:all 0.25s ease;
+            transition:all 0.25s ease
+        }
+    #main {
+        margin-left: 220px;
+        /* background-color: #f6f7f6; */
+        -webkit-transition:all 0.5s ease;
+        -moz-transition:all 0.5s ease;
+        -o-transition:all 0.5s ease;
+        transition:all 0.5s ease
+    }
+
+    #kanban {
+        text-align: center;
+        left: 50%;
+        height: 62%;
+        width: 100%;
+        overflow-y: hidden;
+        box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.116), 0 4px 10px 0 rgba(0, 0, 0, 0.089);
+    }
+    #kanban * {
+        font-family: "Noto Sans TC Light", sans-serif !important;
+    }
+</style>
+{% endblock %}
+
+{% block mainbody %}
+<!-- 側邊選單 -->
+<div id="sidenav" class="uk-text-left">
+    <div id="nav-opener" onclick="closeNav()" onmouseover="hoverNav('hover')" onmouseout="hoverNav('out')"><i><div uk-icon="triangle-left" class="uk-light"></div></i></div>
+    <div class="noto" style="color: #fff">
+        <div class="uk-padding-small  uk-padding-remove-top">Kanban Board<div uk-icon="cog" class="uk-align-right"></div></div>
+    </div>
+    <ul class="uk-nav uk-nav-default uk-padding-small">
+        <li class="title noto-light">
+            Projects
+            <div uk-icon="plus-circle" class="uk-align-right"></div>
+        </li>
+        <div class="noto">
+        <li id="project 1" class="list"><div uk-icon="calendar"></div>project 1</li>
+        <li id="project 2" class="list"><div uk-icon="calendar"></div>project 2</li>
+        <li id="project 3" class="list"><div uk-icon="calendar"></div>project 3</li>
+        </div>
+    </ul>
+</div>
+<!-- 主要頁面 -->
+<div id="main" class="uk-section" uk-height-viewport>
+    <div id="kanban-container">
+        <div id="kanban" class="uk-container uk-padding-remove-horizontal"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    // 側邊選單
+    var isOpenNav = true;
+    var opener = document.getElementById("nav-opener");
+    var openerArrow = document.getElementsByTagName("i")[0].getElementsByTagName("div")[0];
+    var sidenav = document.getElementById("sidenav");
+
+    function openNav() {
+        isOpenNav = true;
+        sidenav.style.left = "0px";
+        document.getElementById("main").style.marginLeft = "220px";  
+        openerArrow.setAttribute('uk-icon', 'triangle-left');
+        opener.onclick = function(){ closeNav(); };
+    }
+    
+    function closeNav() {
+        isOpenNav = false;
+        sidenav.style.left = "-220px";
+        document.getElementById("main").style.marginLeft = "0px";
+        openerArrow.setAttribute('uk-icon', 'triangle-right');
+        opener.onclick = function(){ openNav(); };
+    }
+
+    function hoverNav(state) {
+        if(!isOpenNav && state == 'hover'){
+            opener.style.width = "20px";
+            document.getElementsByTagName("i")[0].style.left = "15%";
+        }
+        else {
+            opener.style.width = "5px";
+            document.getElementsByTagName("i")[0].style.left = "-25%";
+        }
+    }
+</script>
+<!-- 看板的JavaScript -->
+<script type="text/javascript" src="{% static 'js/kb/basic-board.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Team 8">
+    <meta name="description" content="A Kanban board is one of the tools that can be used to implement Kanban to manage work, at the personal or organizational level.">
+    <title>Kanban Board System</title>
+    {% load static %}
+    {% comment %} <script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js'  %}"></script> {% endcomment %}
+    {% comment %} <script type="text/javascript" src="{% static 'js/jquery.lazy.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.lazy.plugins.min.js' %}"></script> {% endcomment %}
+    <script src="{% static 'js/uikit.min.js' %}"></script>
+    <script src="{% static 'js/uikit-icons.min.js' %}"></script>
+    {% comment %} <script>
+        var loaded = false;
+        function hide_loader() {
+            if (!loaded) { //true
+                $('#spinner').fadeOut(1000, function () {//fadeOut後接著在HTML裡面刪除這個div
+                    $(this).remove()
+                });
+                loaded = true;
+                $('body').toggleClass('loaded');
+            }
+        }
+        $(window).load(function () {
+            hide_loader()
+        });
+    </script> {% endcomment %}
+    {% block head_script %}
+    {# 必要在head載入的Script #}
+    {% endblock %}
+
+    {% block stylesheet %}
+    {# 放自己寫CSS的地方 #}
+    {% endblock %}
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.2/css/uikit.min.css">
+    <!-- 自定義CSS -->
+    <style type="text/css">
+        /* 全域CSS定義 */
+        a:link {
+            text-decoration: none;
+        }
+        a:visited {
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: none;
+        }
+        a:active {
+            text-decoration: none;
+        }
+        /* 在所不惜，思源黑體 */
+        @font-face {
+            font-family: 'Noto Sans TC';
+            font-style: normal;
+            font-weight: 400;
+            src: url(//fonts.gstatic.com/ea/notosanstc/v1/NotoSansTC-Regular.woff2) format('woff2'),
+                url(//fonts.gstatic.com/ea/notosanstc/v1/NotoSansTC-Regular.woff) format('woff'),
+                url(//fonts.gstatic.com/ea/notosanstc/v1/NotoSansTC-Regular.otf) format('opentype');
+        }
+        @font-face {
+            font-family: 'Noto Sans TC Light';
+            font-style: normal;
+            font-weight: 300;
+            src: url(//fonts.gstatic.com/ea/notosanstc/v1/NotoSansTC-Light.woff2) format('woff2'),
+               url(//fonts.gstatic.com/ea/notosanstc/v1/NotoSansTC-Light.woff) format('woff'),
+               url(//fonts.gstatic.com/ea/notosanstc/v1/NotoSansTC-Light.otf) format('opentype');
+        }
+        .noto {
+            font-family: "Noto Sans TC", sans-serif !important;
+        }
+        .noto-light{
+            font-family: "Noto Sans TC Light", sans-serif !important;
+        }
+        #bg-img {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: -50px;
+            z-index: -1;
+            background-repeat:no-repeat;
+            background-position: center top;
+            width: auto;
+            height: 100vh; 
+            display: block;
+            background-color: #f6f7f6;
+            /* background-image: url('https://png.pngtree.com/back_origin_pic/04/15/99/82162ada849ca4740f035f7fe4afae38.jpg'); */
+            background-image: url('http://www.cncs.com.uy/content/uploads/fondo1.jpg');
+            background-size: cover;
+            filter: brightness(1) grayscale(1) contrast(110%);
+            opacity: .1;
+        }
+        .uk-navbar-nav > li > a,
+        .uk-navbar-item,
+        .uk-navbar-toggle {
+            font-family: "Noto Sans TC", sans-serif !important;
+            font-size-adjust: 0.63;
+        }
+        .uk-navbar-nav {
+            height: 70px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="bg-img"></div>
+{% comment %} {% include "css/loader.html" %} {% endcomment %}
+<!-- <div id="loader-wrapper">
+        <div class="loader-section section-left"></div>
+        <div class="loader-section section-right"></div>
+</div>
+<figure id="spinner">
+        <div class="dot white"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+</figure> -->
+{% block mainbody %}
+
+{% endblock %}
+
+</body>
+</html>
