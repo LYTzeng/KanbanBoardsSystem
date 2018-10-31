@@ -7,12 +7,16 @@
     <meta name="description" content="A Kanban board is one of the tools that can be used to implement Kanban to manage work, at the personal or organizational level.">
     <title>Kanban Board System</title>
     {% load static %}
-    {% comment %} <script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js'  %}"></script> {% endcomment %}
-    {% comment %} <script type="text/javascript" src="{% static 'js/jquery.lazy.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/jquery.lazy.plugins.min.js' %}"></script> {% endcomment %}
+    <!-- <script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js'  %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.lazy.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.lazy.plugins.min.js' %}"></script> -->
+
+    <!-- jquery -->
+    <script src="https://cdn.jsdelivr.net/gh/jqwidgets/jQWidgets@latest/scripts/jquery-1.11.1.min.js" ></script>
+    <!-- UiKit -->
     <script src="{% static 'js/uikit.min.js' %}"></script>
     <script src="{% static 'js/uikit-icons.min.js' %}"></script>
-    {% comment %} <script>
+    <!-- <script>
         var loaded = false;
         function hide_loader() {
             if (!loaded) { //true
@@ -26,14 +30,11 @@
         $(window).load(function () {
             hide_loader()
         });
-    </script> {% endcomment %}
+    </script> -->
     {% block head_script %}
     {# 必要在head載入的Script #}
     {% endblock %}
 
-    {% block stylesheet %}
-    {# 放自己寫CSS的地方 #}
-    {% endblock %}
     <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.2/css/uikit.min.css">
     <!-- 自定義CSS -->
     <style type="text/css">
@@ -101,6 +102,9 @@
             height: 70px;
         }
     </style>
+    {% block stylesheet %}
+    {# 放自己寫CSS的地方 #}
+    {% endblock %}
 </head>
 
 <body>

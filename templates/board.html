@@ -2,13 +2,13 @@
 {% load static %}
 
 {% block head_script %}
-<!-- jquery -->
-<script src="https://cdn.jsdelivr.net/gh/jqwidgets/jQWidgets@latest/scripts/jquery-1.11.1.min.js" ></script>
 <!-- jqwidgets -->
 <script src="https://cdn.jsdelivr.net/gh/jqwidgets/jQWidgets@latest/jqwidgets/jqxcore.js" ></script>
 <script src="https://cdn.jsdelivr.net/gh/jqwidgets/jQWidgets@latest/jqwidgets/jqxsortable.js" ></script>
 <script src="https://cdn.jsdelivr.net/gh/jqwidgets/jQWidgets@latest/jqwidgets/jqxkanban.js" ></script>
 <script src="https://cdn.jsdelivr.net/gh/jqwidgets/jQWidgets@latest/jqwidgets/jqxdata.js" ></script>
+<!-- jquery ui -->
+<script src="https://code.jquery.com/ui/jquery-ui-git.js"></script>
 <!-- d3.js -->
 <script src="{% static 'js/d3.v4.min.js' %}" type="text/javascript"></script>
 <script src="{% static 'js/d3-scale-chromatic.v1.min.js' %}"></script>
@@ -26,7 +26,7 @@
         z-index: 1;
         top: 0;
         left: 0;
-        background-color: #505050;
+        background-color: #556270;
         transition: 0.5s;
         padding-top: 20px;
         padding-left: 10px;
@@ -57,7 +57,7 @@
         border-left:none;
         cursor:pointer;
         text-shadow:0 1px 0 white;
-        background:#505050;
+        background:#556270;
         -webkit-transition:all 0.25s ease;
         -moz-transition:all 0.25s ease;
         -o-transition:all 0.25s ease;
@@ -85,13 +85,27 @@
     #kanban {
         text-align: center;
         left: 50%;
-        height: 62%;
+        height: auto;
         width: 100%;
         overflow-y: hidden;
         box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.116), 0 4px 10px 0 rgba(0, 0, 0, 0.089);
     }
     #kanban * {
         font-family: "Noto Sans TC Light", sans-serif !important;
+    }
+    .jqx-kanban-column {
+        -webkit-transition:all 0.5s ease;
+        -moz-transition:all 1s ease;
+        -o-transition:all 0.5s ease;
+        transition:all 0.5s ease;
+        backface-visibility: hidden !important;
+        -webkit-backface-visibility: hidden !important;
+        perspective: 1000;
+        -webkit-perspective: 1000;
+        
+    }
+    .jqx-kanban-column-header-collapsed-light {
+        background: #f8f8f8;
     }
 </style>
 {% endblock %}
