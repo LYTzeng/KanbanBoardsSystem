@@ -21,30 +21,47 @@
 <style>
     #sidenav {
         height: 100vh;
-        width: 200px;
+        width: 220px;
         position: fixed;
         z-index: 1;
         top: 0;
         left: 0;
-        background-color: #556270;
+        background-color: #40474e;
         transition: 0.5s;
-        padding-top: 20px;
-        padding-left: 10px;
-        padding-right: 10px;
     }
-
+    .sidenav-text {
+        display: inline-block;
+        margin-left: 15px;
+        margin-right: 15px;
+        width: 190px;
+    }
+    .menu-block {
+        margin-top: 20px;
+    }
+    #logo {
+        height: 50px;
+        font-size: 18px;
+        line-height: 50px;
+    }
+    .cog {
+        margin-left: 13px;
+    }
     ul {
         list-style: none;
+        
     }
         ul > .title {
             color: rgb(184, 184, 184);
             font-size: 17px;
+            line-height: 18px;
+            height: 18px;
         }
-            ul > div > .list {
-                color: #9b9b9b;
-                font-size: 16px;
-                line-height: 30px;
-            }
+        ul > div > .list {
+            color: #9b9b9b;
+            font-size: 16px;
+            line-height: 26px;
+            height: 26px;
+        }
     #nav-opener {
         z-index: 99;
         width:5px;
@@ -57,7 +74,7 @@
         border-left:none;
         cursor:pointer;
         text-shadow:0 1px 0 white;
-        background:#556270;
+        background:#40474e;
         -webkit-transition:all 0.25s ease;
         -moz-transition:all 0.25s ease;
         -o-transition:all 0.25s ease;
@@ -115,17 +132,38 @@
 <div id="sidenav" class="uk-text-left">
     <div id="nav-opener" onclick="closeNav()" onmouseover="hoverNav('hover')" onmouseout="hoverNav('out')"><i><div uk-icon="triangle-left" class="uk-light"></div></i></div>
     <div class="noto" style="color: #fff">
-        <div class="uk-padding-small  uk-padding-remove-top">Kanban Board<div uk-icon="cog" class="uk-align-right"></div></div>
+        <div id="logo" class="sidenav-text">
+            <img src="{% static 'media/favicon.svg' %}" style="height: 26px; transform: translate(0, -2px);">
+            <b>Kanban Board</b>
+            <div uk-icon="cog" uk-toggle="target: #sign-up" class="cog"></div>
+            <div id="sign-up" class="uk-flex-top noto" uk-modal>
+                <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+                    <button class="uk-modal-close-default" type="button" uk-close></button>
+                    {% include "sign_up.html" %}                    
+                </div>
+            </div>
+        </div>
     </div>
-    <ul class="uk-nav uk-nav-default uk-padding-small">
-        <li class="title noto-light">
+    <ul class="uk-nav uk-nav-default menu-block">
+        <li class="title noto-light sidenav-text">
             Projects
             <div uk-icon="plus-circle" class="uk-align-right"></div>
         </li>
-        <div class="noto">
-        <li id="project 1" class="list"><div uk-icon="calendar"></div>project 1</li>
-        <li id="project 2" class="list"><div uk-icon="calendar"></div>project 2</li>
-        <li id="project 3" class="list"><div uk-icon="calendar"></div>project 3</li>
+        <div class="noto-light">
+        <li id="project 1" class="list sidenav-text"><div uk-icon="chevron-right"></div> project 1</li>
+        <li id="project 2" class="list sidenav-text"><div uk-icon="chevron-right"></div> project 2</li>
+        <li id="project 3" class="list sidenav-text"><div uk-icon="chevron-right"></div> project 3</li>
+        </div>
+    </ul>
+    <ul class="uk-nav uk-nav-default menu-block">
+        <li class="title noto-light sidenav-text">
+            Following
+            <div uk-icon="plus-circle" class="uk-align-right"></div>
+        </li>
+        <div class="noto-light">
+        <li id="project 1" class="list sidenav-text"><div uk-icon="user"></div> Kevin</li>
+        <li id="project 2" class="list sidenav-text"><div uk-icon="user"></div> oscar</li>
+        <li id="project 3" class="list sidenav-text"><div uk-icon="user"></div> Bob</li>
         </div>
     </ul>
 </div>

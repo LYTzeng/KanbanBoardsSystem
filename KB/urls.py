@@ -25,6 +25,7 @@ RUNNING_DEVSERVER = (len(sys.argv) > 1 and sys.argv[1] == 'runserver')  # TRUE: 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^board/$', views.KBboard.as_view()),
+    url(r'^$', views.KBboard.as_view()),
 ]
 
 if not RUNNING_DEVSERVER:

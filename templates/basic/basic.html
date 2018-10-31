@@ -34,7 +34,8 @@
     {% block head_script %}
     {# 必要在head載入的Script #}
     {% endblock %}
-
+    <link rel="shortcut icon" type="image/svg+xml" href="{% static 'media/favicon.svg' %}"/>
+    <link rel="shortcut icon" type="image/png" href="{% static 'media/favicon.png' %}"/>
     <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.2/css/uikit.min.css">
     <!-- 自定義CSS -->
     <style type="text/css">
@@ -85,8 +86,7 @@
             width: auto;
             height: 100vh; 
             display: block;
-            background-color: #f6f7f6;
-            /* background-image: url('https://png.pngtree.com/back_origin_pic/04/15/99/82162ada849ca4740f035f7fe4afae38.jpg'); */
+            background-color: #f6f7f6;       
             background-image: url('http://www.cncs.com.uy/content/uploads/fondo1.jpg');
             background-size: cover;
             filter: brightness(1) grayscale(1) contrast(110%);

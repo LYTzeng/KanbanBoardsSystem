@@ -1,0 +1,16 @@
+<svg viewBox="3.664 4.353 63.149 64.866" xmlns="http://www.w3.org/2000/svg">
+  <defs></defs>
+  <title>code</title>
+  <g id="Code" transform="matrix(1, 0, 0, 1, 2.322385, 3.788705)">
+    <g id="Circle_Shadow" data-name="Circle Shadow">
+      <circle class="cls-1" cx="33" cy="34" r="31" style="fill: #556270;"></circle>
+    </g>
+    <g id="Circle">
+      <circle class="cls-2" cx="33" cy="32" r="31" style="fill: rgb(240, 240, 240);"></circle>
+    </g>
+    <path id="Long_Shadow" data-name="Long Shadow" class="cls-3" d="M43.4,61.21A31.08,31.08,0,0,0,62.21,42.4L50.39,30.58l-.48.48L36.39,17.55l-1.22,1.62-1.7,10.51-7.08-7.08L17,32l8,8-1.42,1.41Z" style="opacity: 0.15;"></path>
+    <g id="Code-2" data-name="Code">
+      <path class="cls-4" d="M25,22a2,2,0,0,0-1.4.57h0l-8,8a2,2,0,0,0,0,2.84l8,8h0a2,2,0,1,0,2.81-2.84h0L19.83,32l6.56-6.56h0A2,2,0,0,0,25,22ZM51,32a2,2,0,0,0-.68-1.49L42.42,22.6a2,2,0,1,0-2.81,2.84h0L46.17,32l-6.56,6.56h0a2,2,0,1,0,2.81,2.84l8-8h0A2,2,0,0,0,51,32ZM35,17a2,2,0,0,0-2,1.74h0l-4,26h0A2,2,0,0,0,29,45a2,2,0,0,0,4,.26h0l4-26h0A2,2,0,0,0,37,19,2,2,0,0,0,35,17Z" style="fill: #556270;"></path>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,28 @@
+<!--/sign_up/ 是註冊頁面-->
+<form action="/sign_up/" method="POST" name="signup_form" class="uk-grid-small" uk-grid>
+    <fieldset class="uk-fieldset">
+        <legend class="uk-legend noto">Sign Up</legend>
+        <hr>
+        {% csrf_token %}
+        <div class="uk-child-width-1-2 uk-grid-small uk-margin-small" uk-grid>
+            <div>
+                <input class="uk-input uk-first-column " type="text" name="first" placeholder="名字" required/>
+            </div>
+            <div>
+                <input class="uk-input" type="text" name="last" placeholder="姓氏" required/>
+            </div>
+        </div>
+        <div class="uk-inline uk-margin-small uk-width-1-1">
+            <span class="uk-form-icon" uk-icon="icon: mail"></span>
+            <input class="uk-input" type="text" name="email" placeholder="Your Email" required/>
+        </div>
+        <div class="uk-inline uk-margin-small uk-width-1-1">
+            <span class="uk-form-icon" uk-icon="icon: lock"></span>
+            <input class="uk-input" type="password" name="meema" placeholder="Password" required/>
+        </div>
+        <div class="uk-margin-medium">
+            <input class="uk-button uk-align-center noto"
+                   type="submit" style="font-size: 16px; background: #40474e; color: rgb(184, 184, 184)" value="註冊"/>
+        </div>
+    </fieldset>
+</form>
