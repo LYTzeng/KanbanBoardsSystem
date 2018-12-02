@@ -1,3 +1,26 @@
+# python ignore
 .idea
+__pycache__/
+*.pyc
+
+# django ignore
+*.log
+local_settings.py
+db.sqlite3
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# 機密金匙不可外流
 FirebaseAPIKey.py
 kanban-board-sys-firebase-adminsdk.json
