@@ -27,8 +27,11 @@ class TestUser(unittest.TestCase):
         self.user_for_testing.create(self.request_for_testing_user)
 
     def tearDown(self):
+        del self.client
+        del self.request
         self.user_for_testing.delete_user(self.request_for_testing_user)
         del self.user_for_testing
+        del self.request_for_testing_user
 
     def test_login(self):
         data0 = {
