@@ -15,7 +15,11 @@ import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RUNNING_DEVSERVER = (len(sys.argv) > 1 and sys.argv[1] == 'runserver')  # TRUE: 開發環境, FALSE: Production
-print('[django settings.py]\tRunning on devserver:', RUNNING_DEVSERVER)
+TESTING = (len(sys.argv) > 1 and sys.argv[0] == 'python.exe -m unittest')
+if not TESTING:
+    print('[django settings.py]\tRunning on devserver:', RUNNING_DEVSERVER)
+else:
+    pass
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '27-#as4jni!8f+46_@og)uk7(--35-)50afwb#5(_5u+&=)0!e'

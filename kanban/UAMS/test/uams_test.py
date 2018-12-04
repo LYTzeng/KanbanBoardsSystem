@@ -1,32 +1,34 @@
-"""UAMS單元測試
-專案根目錄> python -m unittest -v kanban\UAMS\test\uams_test.py -b
-"""
+"""UAMS單元測試"""
 import unittest
 from ..src.user import User
+from ..test.mock import Request
 
 
 class TestUser(unittest.TestCase):
+    # 建立一個假的Firebase User
+    fakeClient = User()
+    # 建立一個假的Django request
+    request_generator = Request()
 
     def setUp(self):
-        from django.http import HttpRequest
-        from KB import settings as st
-        from django.conf import settings
-        settings.configure(
-            DEBUG=True,
-            TEMPLATE_DEBUG=True,
-            DATABASES=st.DATABASES,
-            INSTALLED_APPS=st.INSTALLED_APPS,
-            MIDDLEWARE_CLASSES=st.MIDDLEWARE_CLASSES
-        )
-        from django.contrib.sessions.middleware import SessionMiddleware
-        self.request = HttpRequest()
-        middleware = SessionMiddleware()
-        middleware.process_request(self.request)
-        self.fakeUser = User()
+        # 測試create()所需的User class
+        self.client = self.fakeClient
+        self.request = self.request_generator.generate()
+        # 建立測試login()所需的假帳戶
+        self.user_for_testing = self.fakeClient
+        self.request_for_testing_user = self.request_generator.generate()
+        testing_user_info = {
+            'email': 'login.success@test.com',
+            'meema': '123456',
+            'name': 'test',
+            'username': 'success123'
+        }
+        self.request_for_testing_user.POST = testing_user_info
+        self.user_for_testing.create(self.request_for_testing_user)
 
     def tearDown(self):
-        del self.fakeUser
-        del self.request
+        self.user_for_testing.delete_user(self.request_for_testing_user)
+        del self.user_for_testing
 
     def test_login(self):
         data0 = {
@@ -34,26 +36,47 @@ class TestUser(unittest.TestCase):
             'meema': '123456'
         }
         self.request.POST = data0
-        message = self.fakeUser.login(self.request)
-        excepted_message = 'EMAIL_NOT_FOUND'
+        message = self.fakeClient.login(self.request)
         data1 = {
             'email': 'login.success@test.com',
             'meema': '123456'
         }
         self.request.POST = data1
-        session = self.fakeUser.login(self.request)
-        expected_username = 'success123'
-        self.assertEqual(excepted_message, message)
-        self.assertEqual(expected_username, session.session['username'])
+        session = self.fakeClient.login(self.request)
+        self.assertEqual('EMAIL_NOT_FOUND', message)
+        self.assertEqual('success123', session.session['username'])
 
-    # def test_create(self):
-    #     data = {
-    #         'username': 'oscar1234',
-    #         'name': 'Oscar Test',
-    #         'email': 'existed@test.com',
-    #         'meema': '123456'
-    #     }
-    #     req = requests.post('/', data=data)
+    def test_create(self):
+        data = {
+            'username': 'oscar1234',
+            'name': 'Oscar Test',
+            'email': 'existed@test.com',
+            'meema': '123456'
+        }
+        self.request.POST = data
+        session = self.fakeClient.create(self.request)
+        self.assertEqual('oscar1234', session.session['username'])
+
+    def test_sign_out(self):
+        data1 = {
+            'email': 'login.success@test.com',
+            'meema': '123456'
+        }
+        self.request.POST = data1
+        self.fakeClient.login(self.request)
+        signout_request = self.fakeClient.sign_out(self.request)
+        with self.assertRaises(KeyError):
+            print(signout_request.session[('idToken', 'localId', 'username')])
+            self.fakeClient.sign_out(self.request)
+
+    def test_authorize(self):
+        data = {
+            'email': 'login.success@test.com',
+            'meema': '123456'
+        }
+        self.request.POST = data
+        session = self.fakeClient.login(self.request)
+        self.assertTrue(self.fakeClient.authorize(session.session['idToken'],session.session['localId']))
 
 
 if __name__ == "__main__":

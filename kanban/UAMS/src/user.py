@@ -3,12 +3,13 @@
 注意：呼叫function都要從View傳入request參數
 註冊: User.create()
 登入: User.login()
-登出: User.logout()
+登出: User.sign_out()
 登入有效性及權限驗證: User.authorize()
 """
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+from firebase_admin import auth
 import pyrebase
 import requests
 import json
@@ -80,14 +81,50 @@ class User():
             message = "Unknown Error"
             return message
 
-    def authorize(self):
-        return NotImplemented
+    def authorize(self, idToken, localId):
+        """驗證使用者，未登入者限制權限"""
+        current_user = self.authentication.current_user
+        localId_real = current_user['localId']
+        localId_session = localId
+        token_real = current_user['idToken']
+        token_session = idToken
+        EXPIRED = False
+        try:
+            self.authentication.get_account_info(token_session)
+        except Exception:
+            EXPIRED = True
+        if not EXPIRED and localId_real == localId_session and token_real == token_session:
+            self.authentication.refresh(current_user['refreshToken'])
+            return True
+        else:
+            return False
+
+    def delete_user(self, request):
+        """刪除帳號"""
+        user = self.login(request)
+        if self._email_exists:
+            try:
+                auth.delete_user(user.session['localId'])
+            except:
+                print(user)
+            self.user_info_db.document(self._get_username_by_email()).delete()
+
+    def sign_out(self, request):
+        """登出"""
+        try:
+            # 清除 Session
+            del request.session['idToken']
+            del request.session['localId']
+            del request.session['username']
+            return request
+        except Exception as e:
+            raise e
 
     @property
     def _email_exists(self):
         """確認該信箱是否已經註冊
         :param email:
-        :return: True>exists
+        :return: Boolean: True>exists
         """
         user = None
         user = self._query_user_by_email()
@@ -97,7 +134,7 @@ class User():
     def _username_exists(self):
         """確認帳號使否已被註冊
         :param username:
-        :return: True>exists
+        :return: Boolean: True>exists
         """
         user = None
         query = self.database.collection('users').document(self.username).get()
