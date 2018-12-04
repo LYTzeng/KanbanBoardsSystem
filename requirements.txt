@@ -1,6 +1,6 @@
 Django==1.8.19
 gunicorn==19.8.1
 pip==10.0.1
-requests==2.18.4
+requests==2.20.0
 pyrebase==3.0.27
 firebase_admin==2.13.0
