@@ -2,11 +2,13 @@
 import unittest
 from ..src.user import User
 from ..test.mock import Request
+from kanban.firebase.setup import Firebase
 
 
 class TestUser(unittest.TestCase):
+    firebase = Firebase()
     # 建立一個假的Firebase User
-    fakeClient = User()
+    fakeClient = User(firebase)
     # 建立一個假的Django request
     request_generator = Request()
 
@@ -32,7 +34,7 @@ class TestUser(unittest.TestCase):
         self.user_for_testing.delete_user(self.request_for_testing_user)
         del self.user_for_testing
         del self.request_for_testing_user
-
+    
     def test_login(self):
         data0 = {
             'email': 'login.fail@test.com',
@@ -46,7 +48,8 @@ class TestUser(unittest.TestCase):
         }
         self.request.POST = data1
         session = self.fakeClient.login(self.request)
-        self.assertEqual('EMAIL_NOT_FOUND', message)
+        self.assertEqual('EMAIL_NOT_FOUND: login.fail@test.com', message)
+        print(session)
         self.assertEqual('success123', session.session['username'])
 
     def test_create(self):

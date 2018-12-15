@@ -6,10 +6,6 @@
 登出: User.sign_out()
 登入有效性及權限驗證: User.authorize()
 """
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
-from firebase_admin import auth
 import pyrebase
 import requests
 import json
@@ -18,20 +14,13 @@ from ..src import FirebaseAPIKey
 
 class User():
 
-    def __init__(self, DEVSERVER = True):
+    def __init__(self, Firebase):#DEVSERVER = True):
         """初始化
-        :param DEVSERVER: 是否運行於開發環境?
+        :param Credentials: Firebase 的 API 認證 Class
         """
-        self.DEVSERVER = DEVSERVER
-        if DEVSERVER:  # 本地開發環境 初始化Firebase
-            self._cred = credentials.Certificate('D:/NTUT/軟體工程/project/kanban-board-sys-firebase-adminsdk.json')
-            firebase_admin.initialize_app(self._cred)
-        else:          # Google平台 初始化Firebase
-            self._cred = credentials.ApplicationDefault()
-            firebase_admin.initialize_app(self._cred, {
-                'projectId': 'kanban-board-sys',
-            })
-        self.database = firestore.client()  # Firestore
+        # self.database = firestore.client()  # Firestore
+        self.firebase = Firebase
+        self.database = self.firebase.firestore()
         self.user_info_db = self.database.collection('users')
         self._conf = FirebaseAPIKey.get()
         self.authentication = pyrebase.initialize_app(self._conf).auth()  # Firebase Auth
@@ -47,7 +36,9 @@ class User():
         self.name = request.POST.get('name')        # User名稱
         self.email = request.POST.get('email')      # 信箱
         meema = request.POST.get('meema')      # 密碼
-        if not self._email_exists or not self._username_exists:
+        if self._email_exists or self._username_exists:
+            return "email或帳號已註冊"
+        else:
             # 密碼資訊寫到Firebase Auth
             self.user = self.authentication.create_user_with_email_and_password(self.email, meema)
             # 一般資訊寫到Firestore
@@ -70,7 +61,7 @@ class User():
             error_json = e.args[1]
             error = json.loads(error_json)['error']
             message = error['message']
-            return message  # 登入失敗 回傳錯誤訊息
+            return message + ": " + self.email  # 登入失敗 回傳錯誤訊息
         if self.user['registered']:
             request.session['idToken'] = self.user['idToken']  # token有時效性
             request.session['localId'] = self.user['localId']  # 唯一的User ID
@@ -104,7 +95,8 @@ class User():
         user = self.login(request)
         if self._email_exists:
             try:
-                auth.delete_user(user.session['localId'])
+                # auth.delete_user(user.session['localId'])
+                self.firebase.auth().delete_user(user.session['localId'])
             except:
                 print(user)
             self.user_info_db.document(self._get_username_by_email()).delete()
@@ -126,9 +118,8 @@ class User():
         :param email:
         :return: Boolean: True>exists
         """
-        user = None
         user = self._query_user_by_email()
-        return user is not None
+        return user != {}
 
     @property
     def _username_exists(self):
@@ -136,7 +127,6 @@ class User():
         :param username:
         :return: Boolean: True>exists
         """
-        user = None
         query = self.database.collection('users').document(self.username).get()
         user = query.to_dict()
         return user is not None
