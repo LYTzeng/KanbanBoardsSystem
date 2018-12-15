@@ -4,6 +4,18 @@ An implementation of Kanban method based on Django web application.
 
 ~~很抱歉這其實不算是README 主要是讓組員更了解專案((希望(((被K><~~
 
+## 測試方法
+- 測試UAMS 
+  ```bash
+  專案路徑\KB> python -m unittest -v kanban\UAMS\test\uams_test.py -b
+  ```
+- 計算UAMS測試的Code coverage
+  ```bash
+  專案路徑\KB> coverage run --source=kanban\UAMS\src,kanban\UAMS\test -m unittest -v kanban\UAMS\test\uams_test.py -b
+  專案路徑\KB> coverage report -m
+  專案路徑\KB> htmlcov\index.html
+  ```
+
 ## 專案架構
 ```text
 │  manage.py
@@ -56,11 +68,7 @@ An implementation of Kanban method based on Django web application.
     └─css
         └─kb
 ```
-## 測試方法
-- 測試UAMS 
-  ```bash
-  專案路徑\KB> python -m unittest -v kanban\UAMS\test\uams_test.py -b
-  ```
+
   
 ---
 ###### README.MD使用[stackedit](https://stackedit.io/)製作
