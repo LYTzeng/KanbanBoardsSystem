@@ -1,7 +1,7 @@
 """UAMS單元測試"""
 import unittest
 from ..src.user import User
-from ..test.mock import Request
+from kanban.testing.mock import Request
 from kanban.firebase.setup import Firebase, Pyrebase
 
 
