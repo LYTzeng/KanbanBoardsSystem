@@ -2,6 +2,8 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 from firebase_admin import auth
+import pyrebase
+from ..firebase import FirebaseAPIKey
 
 
 class Firebase():
@@ -21,3 +23,12 @@ class Firebase():
 
     def auth(self):
         return auth
+
+
+class Pyrebase():
+    def __init__(self):
+        self._conf = FirebaseAPIKey.get()
+        self.firebase = pyrebase.initialize_app(self._conf)  # Firebase Client
+
+    def auth(self):
+        return self.firebase.auth()  # Authentication

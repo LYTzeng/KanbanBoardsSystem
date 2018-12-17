@@ -6,24 +6,20 @@
 登出: User.sign_out()
 登入有效性及權限驗證: User.authorize()
 """
-import pyrebase
 import requests
 import json
-from ..src import FirebaseAPIKey
 
 
 class User():
 
-    def __init__(self, Firebase):#DEVSERVER = True):
+    def __init__(self, Firebase, Pyrebase):
         """初始化
         :param Credentials: Firebase 的 API 認證 Class
         """
-        # self.database = firestore.client()  # Firestore
         self.firebase = Firebase
         self.database = self.firebase.firestore()
         self.user_info_db = self.database.collection('users')
-        self._conf = FirebaseAPIKey.get()
-        self.authentication = pyrebase.initialize_app(self._conf).auth()  # Firebase Auth
+        self.authentication = Pyrebase.auth()
 
         self.user = None  # Firebase user 已註冊或登入的使用者
         self.email = None

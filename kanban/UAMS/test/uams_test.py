@@ -2,13 +2,14 @@
 import unittest
 from ..src.user import User
 from ..test.mock import Request
-from kanban.firebase.setup import Firebase
+from kanban.firebase.setup import Firebase, Pyrebase
 
 
 class TestUser(unittest.TestCase):
     firebase = Firebase()
+    pyrebase = Pyrebase()
     # 建立一個假的Firebase User
-    fakeClient = User(firebase)
+    fakeClient = User(firebase, pyrebase)
     # 建立一個假的Django request
     request_generator = Request()
 
