@@ -5,13 +5,23 @@ An implementation of Kanban method based on Django web application.
 ~~很抱歉這其實不算是README 主要是讓組員更了解專案((希望(((被K><~~
 
 ## 測試方法
-- 測試UAMS 
+- 單元測試 
   ```bash
-  專案路徑\KB> python -m unittest -v kanban\UAMS\test\uams_test.py -b
+  專案路徑\KB> python -m unittest -v kanban\testing\pms_test.py -b
+  專案路徑\KB> python -m unittest -v kanban\testing\uams_test.py -b
   ```
-- 計算UAMS測試的Code coverage
+- 計算測試的Code coverage
+ 
+  pip 先
+  
   ```bash
-  專案路徑\KB> coverage run --source=kanban\UAMS\src,kanban\UAMS\test -m unittest -v kanban\UAMS\test\uams_test.py -b
+  pip install coverage
+  ```
+ 
+  再用!
+  
+  ```bash
+  專案路徑\KB> coverage run --source=kanban\UAMS\src,kanban\testing -m unittest -v kanban\testing\uams_test.py -b
   專案路徑\KB> coverage report -m
   專案路徑\KB> htmlcov\index.html
   ```
@@ -25,14 +35,20 @@ An implementation of Kanban method based on Django web application.
 │  │  models.py	本專案不會用到
 │  │  tests.py	本專案不會用到
 │  │  views.py	就是MVC中的View
+│  ├─firebase
+│  │  │  FirebaseAPIKey.py 這個是API密匙
+│  │  │  setup.py 用來連資料庫的Class
 │  ├─PMS	專案管理子系統
+│  │  ├─src
+│  │  │  │  project.py
 │  ├─TMS	任務管理子系統
 │  ├─UAMS	使用者管理子系統
 │  │  ├─src
-│  │  │  │  FirebaseAPIKey.py	API金匙，當然不在Github上
-│  │  │  │  user.py		使用者管理子系統的Implementation
-│  │  ├─test	測試
-│  │  │  │  uams_test.py	單元測試
+│  │  │  │  user.py
+│  ├─testing 測試和測資放這
+│  │  │  mock.py
+│  │  │  pms_test.py
+│  │  │  uams_test.py
 ├─KB	主要是Django框架會用到的必要設定
 │  │  settings.py	環境變數
 │  │  urls.py		定義URL對應被呼叫的View
