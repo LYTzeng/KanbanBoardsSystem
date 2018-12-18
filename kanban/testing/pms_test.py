@@ -1,5 +1,5 @@
 import unittest
-from ..src.project import Project
+from kanban.PMS.src.project import Project
 from kanban.testing.mock import Request
 from kanban.firebase.setup import Firebase
 
