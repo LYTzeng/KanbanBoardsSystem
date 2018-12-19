@@ -24,3 +24,6 @@ coverage.xml
 # 機密金匙不可外流
 FirebaseAPIKey.py
 kanban-board-sys-firebase-adminsdk.json
+
+# vscode
+.vscode
