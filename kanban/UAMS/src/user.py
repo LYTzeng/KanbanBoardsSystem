@@ -10,7 +10,7 @@ import requests
 import json
 
 
-class User():
+class User:
 
     def __init__(self, Firebase, Pyrebase):
         """初始化

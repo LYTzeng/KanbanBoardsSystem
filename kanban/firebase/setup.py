@@ -6,7 +6,7 @@ import pyrebase
 from ..firebase import FirebaseAPIKey
 
 
-class Firebase():
+class Firebase:
     def __init__(self, DEVSERVER = True):
         self.DEVSERVER = DEVSERVER
         if DEVSERVER:  # 本地開發環境 初始化Firebase
@@ -25,7 +25,7 @@ class Firebase():
         return auth
 
 
-class Pyrebase():
+class Pyrebase:
     def __init__(self):
         self._conf = FirebaseAPIKey.get()
         self.firebase = pyrebase.initialize_app(self._conf)  # Firebase Client

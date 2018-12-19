@@ -1,17 +1,17 @@
 """專案管理子系統
-建立專案、查詢專案成員、權限、專案Metadata 等
+建立專案、查詢專案成員、權限、專案Metadata、任務移動/增加/刪除 等
 """
-from typing import ( List, Dict )
+from typing import (List, Dict)
 
 
-class Project():
+class Project:
     def __init__(self, Firebase):
         """初始化
         :param Firebase: Firebase 的 API 認證 Class
         """
         self.firebase = Firebase
         self.database = self.firebase.firestore()  # Firestore
-        self.project_db = self.database.collection('projects')
+        self.project_collection = self.database.collection('projects')
 
         self.project_document = None
         self.project_id = None
@@ -36,7 +36,7 @@ class Project():
             'members': self.members,  # type: List[str]
             'columns': self.columns  # type: Dict[str: List[str]]
         }
-        ref = self.project_db.document()
+        ref = self.project_collection.document()
         self.project_id = ref.id
         ref.set(project_data)
         self.get_board(project_id=ref.id)
@@ -67,7 +67,7 @@ class Project():
             {'name': new_name}
         )
 
-    def get_board(self, request = None, project_id: str = str()):
+    def get_board(self, request=None, project_id: str = str()):
         """開啟舊專案"""
         if request is not None:
             self.project_id = request.POST.get('project-id')
@@ -75,7 +75,7 @@ class Project():
             self.project_id = project_id
         else:
             raise ValueError
-        self.project_document = self.project_db.document(self.project_id)
+        self.project_document = self.project_collection.document(self.project_id)
         project_data = self.project_document.get().to_dict()
         self.name = project_data['name']
         self.owner = project_data['owner']
