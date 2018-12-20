@@ -9,6 +9,7 @@ An implementation of Kanban method based on Django web application.
   ```bash
   專案路徑\KB> python -m unittest -v kanban\testing\pms_test.py -b
   專案路徑\KB> python -m unittest -v kanban\testing\uams_test.py -b
+  專案路徑\KB> python -m unittest -v kanban\testing\tms_test.py -b
   ```
 - 計算測試的Code coverage
  
