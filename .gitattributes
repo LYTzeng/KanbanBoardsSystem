@@ -2,5 +2,5 @@
 * text=auto
 
 # Minified JavaScript and CSS
-- (\.|-)min\.(js|css)$
-- jqx(\.|-)\.(css)$
+- (\.|-)min\.(js|css)$ linguist-vendored=false
+- jqx(\.|-)\.(css)$ linguist-vendored=false
