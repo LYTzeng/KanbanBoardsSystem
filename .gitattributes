@@ -1,2 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Minified JavaScript and CSS
+- (\.|-)min\.(js|css)$
+- jqx(\.|-)\.(css)$
