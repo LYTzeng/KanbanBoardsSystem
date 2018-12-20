@@ -25,6 +25,7 @@ class User:
         self.email = None
         self.name = None
         self.username = None
+        self.project_list = list()
 
     def create(self, request):
         """註冊"""
@@ -43,6 +44,7 @@ class User:
                 'type': 'normal',
                 'name': self.name,
                 'email': self.email,
+                'project_list': self.project_list
             }
             self.user_info_db.document(self.username).set(user_data)
         return self.login(request)
@@ -63,6 +65,10 @@ class User:
             request.session['localId'] = self.user['localId']  # 唯一的User ID
             request.session['username'] = self._get_username_by_email()
             request.session.set_expiry(1800)
+            meta = self.user_info_db.document(self._get_username_by_email()).get().to_dict()
+            self.name = meta['name']
+            self.username = self._get_username_by_email()
+            self.project_list = meta['project_list']
             return request
         else:
             message = "Unknown Error"
@@ -108,6 +114,18 @@ class User:
         except Exception as e:
             raise e
 
+    def join_project(self, project_id):
+        self.project_list = self.get_project_list()
+        self.project_list.append(project_id)
+        self.user_info_db.document(self.username).update({'project_list': self.project_list})
+
+    def resign_project(self, project_id):
+        if self.is_owner(project_id) or not self.is_member(project_id):
+            return
+        self.project_list = self.get_project_list()
+        self.project_list.remove(project_id)
+        self.user_info_db.document(self.username).update({'project_list': self.project_list})
+
     @property
     def _email_exists(self):
         """確認該信箱是否已經註冊
@@ -140,3 +158,19 @@ class User:
         for q in query:
             user = q.to_dict()
         return user
+
+    def get_project_list(self):
+        return self.user_info_db.document(self.username).get().to_dict()['project_list']
+
+    def is_owner(self, project_id):
+        project = self.database.collection('projects').document(project_id).get().to_dict()
+        owner = project['owner']
+        if self.username == owner: return True
+        else: return False
+
+    def is_member(self, project_id):
+        project = self.database.collection('projects').document(project_id).get().to_dict()
+        members = project['members']
+        for member in members:
+            if self.username == member: return True
+        return False

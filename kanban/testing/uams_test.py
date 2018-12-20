@@ -37,6 +37,7 @@ class TestUser(unittest.TestCase):
         del self.request_for_testing_user
     
     def test_login(self):
+        """測試登入"""
         data0 = {
             'email': 'login.fail@test.com',
             'meema': '123456'
@@ -50,10 +51,12 @@ class TestUser(unittest.TestCase):
         self.request.POST = data1
         session = self.fakeClient.login(self.request)
         self.assertEqual('EMAIL_NOT_FOUND: login.fail@test.com', message)
-        print(session)
         self.assertEqual('success123', session.session['username'])
+        self.assertEqual('test', self.fakeClient.name)
+        self.assertEqual('success123', self.fakeClient.username)
 
     def test_create(self):
+        """測試建立使用者"""
         data = {
             'username': 'oscar1234',
             'name': 'Oscar Test',
@@ -65,6 +68,7 @@ class TestUser(unittest.TestCase):
         self.assertEqual('oscar1234', session.session['username'])
 
     def test_sign_out(self):
+        """測試登出"""
         data1 = {
             'email': 'login.success@test.com',
             'meema': '123456'
@@ -77,6 +81,7 @@ class TestUser(unittest.TestCase):
             self.fakeClient.sign_out(self.request)
 
     def test_authorize(self):
+        """測試權限驗證"""
         data = {
             'email': 'login.success@test.com',
             'meema': '123456'
@@ -85,6 +90,19 @@ class TestUser(unittest.TestCase):
         session = self.fakeClient.login(self.request)
         self.assertTrue(self.fakeClient.authorize(session.session['idToken'],session.session['localId']))
 
+    def test_join_and_get_project(self):
+        """測試將使用者加入專案 以及取得用戶所屬專案list"""
+        self.user_for_testing.join_project('A9zmCsIcad4AqWwNx3T6')
+        self.user_for_testing.join_project('O3cbdiiF8J2jRdM11rAD')
+        expected = ['A9zmCsIcad4AqWwNx3T6', 'O3cbdiiF8J2jRdM11rAD']
+        self.assertEqual(expected, self.user_for_testing.get_project_list())
+
+    def test_resign_project(self):
+        """測試使用者退出專案"""
+        self.user_for_testing.join_project('O3cbdiiF8J2jRdM11rAD')
+        self.assertEqual(['O3cbdiiF8J2jRdM11rAD'], self.user_for_testing.get_project_list())
+        self.user_for_testing.resign_project('O3cbdiiF8J2jRdM11rAD')
+        self.assertEqual([], self.user_for_testing.get_project_list())
 
 if __name__ == "__main__":
     unittest.main()
