@@ -1,6 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
-# Minified JavaScript and CSS
-(\.|-)min\.(js|css) linguist-vendored=true
-jqx(\.|-)\.(css) linguist-vendored=true
+# 排除第三方程式碼
+static/css/jqwidgets/styles/* linguist-vendored=true
