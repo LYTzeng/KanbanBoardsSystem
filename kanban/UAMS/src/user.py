@@ -61,10 +61,12 @@ class User:
             message = error['message']
             return message + ": " + self.email  # 登入失敗 回傳錯誤訊息
         if self.user['registered']:
+            # 寫入Session
             request.session['idToken'] = self.user['idToken']  # token有時效性
             request.session['localId'] = self.user['localId']  # 唯一的User ID
             request.session['username'] = self._get_username_by_email()
             request.session.set_expiry(1800)
+            # 更新Class狀態
             meta = self.user_info_db.document(self._get_username_by_email()).get().to_dict()
             self.name = meta['name']
             self.username = self._get_username_by_email()
@@ -97,7 +99,6 @@ class User:
         user = self.login(request)
         if self._email_exists:
             try:
-                # auth.delete_user(user.session['localId'])
                 self.firebase.auth().delete_user(user.session['localId'])
             except:
                 print(user)
@@ -115,11 +116,13 @@ class User:
             raise e
 
     def join_project(self, project_id):
+        """用戶加入專案"""
         self.project_list = self.get_project_list()
         self.project_list.append(project_id)
         self.user_info_db.document(self.username).update({'project_list': self.project_list})
 
     def resign_project(self, project_id):
+        """用戶退出專案"""
         if self.is_owner(project_id) or not self.is_member(project_id):
             return
         self.project_list = self.get_project_list()
@@ -146,6 +149,7 @@ class User:
         return user is not None
 
     def _get_username_by_email(self):
+        """透過email取得使用者帳號"""
         query = self.database.collection('users').where('email', '==', self.email).get()
         username = str()
         for q in query:
@@ -153,6 +157,7 @@ class User:
         return username
 
     def _query_user_by_email(self):
+        """在_username_exists()被呼叫"""
         query = self.database.collection('users').where('email', '==', self.email).get()
         user = dict()
         for q in query:
@@ -160,15 +165,18 @@ class User:
         return user
 
     def get_project_list(self):
+        """取得用戶所屬專案"""
         return self.user_info_db.document(self.username).get().to_dict()['project_list']
 
     def is_owner(self, project_id):
+        """驗證使用者是否為專案管理員"""
         project = self.database.collection('projects').document(project_id).get().to_dict()
         owner = project['owner']
         if self.username == owner: return True
         else: return False
 
     def is_member(self, project_id):
+        """驗證使用者是否為專案成員"""
         project = self.database.collection('projects').document(project_id).get().to_dict()
         members = project['members']
         for member in members:
