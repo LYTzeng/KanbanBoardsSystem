@@ -3,3 +3,4 @@
 
 # 排除第三方程式碼
 static/css/jqwidgets/styles/* linguist-vendored=true
+*.min.js linguist-vendored=true
