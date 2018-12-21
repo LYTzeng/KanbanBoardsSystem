@@ -39,6 +39,10 @@
     <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.2/css/uikit.min.css">
     <!-- 自定義CSS -->
     <style type="text/css">
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
         /* 全域CSS定義 */
         a:link {
             text-decoration: none;
@@ -80,7 +84,7 @@
             left: 0;
             right: 0;
             top: -50px;
-            z-index: -1;
+            z-index: -99;
             background-repeat:no-repeat;
             background-position: center top;
             width: auto;
@@ -89,8 +93,8 @@
             background-color: #f6f7f6;       
             background-image: url('http://www.cncs.com.uy/content/uploads/fondo1.jpg');
             background-size: cover;
-            filter: brightness(1) grayscale(1) contrast(110%);
-            opacity: .1;
+            filter: brightness(1) grayscale(1) contrast(120%);
+            opacity: .3;
         }
         .uk-navbar-nav > li > a,
         .uk-navbar-item,

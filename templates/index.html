@@ -1,0 +1,155 @@
+{% extends 'basic/basic.html' %}
+{% load static %}
+
+{% block stylesheet %}
+<style>
+    #heading {
+        height: 100%;
+        width: 100%;
+    }
+    #heading-para {
+        display: block;
+        position: auto;
+        height: 200px;
+        width: 100%;
+        background: black;
+        opacity: 0.5;
+        transform: skewY(-10deg);
+    }
+    #navbar {
+        height: 30px;
+        width: 100vw;
+        background: transparent;
+        z-index: 99;
+        top: 0;
+        left: 0;
+        position: fixed;
+        color:azure;
+    }
+        #navbar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            margin-right: 10px;
+            padding-right: 5px;
+        }
+            #navbar ul li {
+                display: block;
+                text-align: center;
+                float: right;
+                padding-left: 10px;
+                padding-right: 10px;
+                padding-top: 5px;
+            }
+    #header1 {
+        z-index: 0;
+        background-color: #666666;
+        -ms-transform: skewY(-8deg); /* IE 9 */
+        -webkit-transform: skewY(-8deg); /* Safari 3-8 */
+        transform: skewY(-8deg);
+
+    }
+    #header2 {
+        z-index: -1;
+        background-color: #E26A60;
+        -ms-transform: skewY(-7deg); /* IE 9 */
+        -webkit-transform: skewY(-7deg); /* Safari 3-8 */
+        transform: skewY(-7deg);
+        left: 2%;
+    }
+    #header3 {
+        z-index: -2;
+        background-color: #CCFF00;
+        -ms-transform: skewY(-3deg); /* IE 9 */
+        -webkit-transform: skewY(-3deg); /* Safari 3-8 */
+        transform: skewY(-3deg);
+        left: 6%;
+        top: -18%;
+    }
+    #header4 {
+        z-index: -3;
+        background-color: #A3DBC9;
+        -ms-transform: skewY(2deg); /* IE 9 */
+        -webkit-transform: skewY(2deg); /* Safari 3-8 */
+        transform: skewY(2deg);
+        left: 40%;
+        top: -20%;
+    }
+    #header5 {
+        z-index: -4;
+        background-color: #69D2E7;
+        -ms-transform: skewY(10deg); /* IE 9 */
+        -webkit-transform: skewY(-10deg); /* Safari 3-8 */
+        transform: skewY(10deg);
+        left: 55%;
+    }
+    .header {
+        height: 60vh;
+        width: 100%;
+        position:absolute;
+        top: -15%;
+    }
+    .kb-menu-button-text {
+        font-size: 16px;
+        color: azure;
+        background-color: transparent;
+        padding: 0;
+        border: none;
+        background: none;
+        cursor:pointer;
+    }
+        .kb-menu-button-text :hover {
+            text-decoration: line-through;
+            text-decoration-color: azure;
+        }
+</style>
+{% endblock %}
+
+{% block mainbody %}
+<!-- <div id="heading-para"></div> -->
+<div id="heading" class="">
+    <div id="header1" class="header"></div>
+    <div id="header2" class="header"></div>
+    <div id="header3" class="header"></div>
+    <div id="header4" class="header"></div>
+    <div id="header5" class="header"></div>
+    <div class="uk-container uk-background-transparent uk-animation-fade" style="margin-top: 10%;">
+        <h1 class="noto uk-text-center uk-heading-primary uk-light uk-visible@s"><span>Kanban Board System</span></h1>
+        <h1 class="noto uk-text-center  uk-light uk-hidden@s">Kanban Board System</h1>
+        <h3 class="noto uk-text-center uk-light uk-visible@s">Manage your project!</h3><br>
+    </div>
+</div>
+
+<div id="navbar" class="noto-light" style="overflow: hidden;">
+    <div>
+        <ul>
+            {% if not request.session.idToken %}
+                <li uk-toggle="target: #sign-up"><button class="noto kb-menu-button-text">Sign Up</button></li>
+
+                <li uk-toggle="target: #login"><button class="noto kb-menu-button-text">Login</button></li>
+                
+            {% else %}
+                <li>Hi, {{ request.session.username }}</li>
+                <li><a href="/signout/"><button class="noto kb-menu-button-text">Sign Out</button></a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+
+<!--
+    彈出視窗程式碼
+-->
+<div id="sign-up" class="uk-flex-top noto" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        {% include "sign_up.html" %}
+    </div>
+</div>
+
+<div id="login" class="uk-flex-top noto" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        {% include "login.html" %}
+    </div>
+</div>
+{% endblock %}

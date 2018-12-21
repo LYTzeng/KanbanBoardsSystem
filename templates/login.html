@@ -1,0 +1,18 @@
+<!--/login/ 發送登入Request-->
+<form action="/login/" method="POST" name="login" class="uk-grid-small" uk-grid>
+    <fieldset class="uk-fieldset">
+        <legend class="uk-legend noto">User Login</legend>
+        <hr>
+        {% csrf_token %}
+        <div class="uk-inline uk-margin-small uk-width-1-1">
+            <span class="uk-form-icon" uk-icon="icon: mail"></span>
+            <input class="uk-input" type="text" name="email" placeholder="Your Email" required/>
+        </div>
+        <div class="uk-inline uk-margin-small uk-width-1-1">
+            <span class="uk-form-icon" uk-icon="icon: lock"></span>
+            <input class="uk-input" type="password" name="meema" placeholder="Password" required/>
+        </div>
+        <input class="uk-button-primary uk-button uk-align-center uk-margin-small noto"
+               type="submit" style="font-size: 16px; background: #40474e; color: azure" value="登入"/>
+    </fieldset>
+</form>

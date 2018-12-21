@@ -14,7 +14,6 @@ Including another URLconf
 """
 import sys
 from django.conf.urls import include, url
-from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
 from kanban import views
@@ -23,9 +22,13 @@ from kanban import views
 RUNNING_DEVSERVER = (len(sys.argv) > 1 and sys.argv[1] == 'runserver')  # TRUE: 開發環境, FALSE: Production
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^board/$', views.KBboard.as_view()),
-    url(r'^$', views.KBboard.as_view()),
+    url(r'^board/$', views.KanbanBoard.as_view()),
+    url(r'^$', views.Index.as_view()),
+    url(r'^index/(\d+)/$', views.Index.as_view()),
+    url(r'^KanbanProjJSON/$', views.KanbanProjData.as_view()),
+    url(r'^login/$', views.Login.as_view()),
+    url(r'^signup/', views.SignUp.as_view()),
+    url(r'^signout/$', views.SignOut.as_view()),
 ]
 
 if not RUNNING_DEVSERVER:
