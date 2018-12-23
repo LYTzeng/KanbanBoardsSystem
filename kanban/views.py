@@ -30,7 +30,7 @@ class KanbanBoard(View):
         project_name_id_dict = project.get_proj_name_by_id_dict(user.project_list)  # type: Dict[str, str]
         project_list = user.project_list  # type: List[str] # project id
         # 開啟第一個專案
-        proj_data = project.get_board(project_id=project_list[0])
+        if project_name_id_dict != [] : proj_data = project.get_board(project_id=project_list[0])
         return render(request, "board.html", locals())
 
 

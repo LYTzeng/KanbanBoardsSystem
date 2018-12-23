@@ -34,7 +34,8 @@ class Project:
             'name': self.name,  # type: str
             'owner': self.owner,  # type: str
             'members': self.members,  # type: List[str]
-            'columns': self.columns  # type: Dict[str: List[str]]
+            'columns': self.columns,  # type: Dict[str: List[str]]
+            'attr': self.attr  # type: List[str]
         }
         ref = self.project_collection.document()
         self.project_id = ref.id
@@ -83,6 +84,7 @@ class Project:
         self.owner = project_data['owner']
         self.members = project_data['members']
         self.columns = project_data['columns']
+        self.attr = project_data['attr']
         return project_data  # type: dict
 
     def move_task(self, task_id: str, src: str, dst: str):

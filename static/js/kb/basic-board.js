@@ -1,7 +1,39 @@
 var colorArray = ['#556270', '#4ecdc4', '#c7f464', '#ff6b6b', '#c44d58'];
 var textColor = ['white','black','black','white','white'];
 
-$(document).ready(function () {
+var projectMember = new Array();  // 專案成員陣列
+var projectAttr = new Array();  // 專案欄位
+var projectCol = new Array();  // 專案所有卡片與欄位
+// [異步] 取得專案資料JSON
+$.getJSON("/KanbanProjJSON/", function(projectData){
+    for (var i = 0 ; i < projectData['members'].length ;i++){
+        projectMember.push({id: i, name: projectData['members'][i]}); // [{ id: 1, name: "Andrew Fuller"},...]
+    }
+    for (var i = 0 ; i < projectData['attr'].length ;i++){
+        var colName = projectData['attr'][i];
+        if (colName == "progress"){
+            // [{ text: "...", iconClassName: "..." dataField: "..." , maxItems: 5},...]
+            projectAttr.push({text: colName, dataField: colName, iconClassName: "jqx-icon-plus-alt", maxItems: 5});
+        }
+        else{
+            projectAttr.push({text: colName, dataField: colName, iconClassName: "jqx-icon-plus-alt"});
+        }
+
+        if (projectData["columns"][colName] != undefined){
+            for (var j; j < projectData["columns"][colName].length; j++){
+                // TODO: 讀取Task sub-collection的卡片
+            }
+        }
+    }
+
+    $(document).ready(mainPage());  // jQuery
+})
+
+
+
+// 主要看板JS
+function mainPage () {
+
     var color = d3.scaleOrdinal()
                 .range(colorArray); 
 
@@ -10,7 +42,7 @@ $(document).ready(function () {
             .attr('style', function (d) {
             return 'background-color: ' + color(i);
         });
-        }
+    }
 
     var fields = [// 資料型態
              { name: "id", type: "string" },
@@ -20,37 +52,29 @@ $(document).ready(function () {
              { name: "color", map: "hex", type: "string" },
              { name: "resourceId", type: "number" }
     ];
+
     var source =
      {
          localData: [// Fake Data
-                  { id: getRandom(1000,5000), state: "new", label: "SRS撰寫", tags: "SRS", hex: color(getRandom(1,5))},
-                  { id: getRandom(1000,5000), state: "work", label: "Prototyping", tags: "Prototype", hex: color(getRandom(1,5))},
-                  { id: getRandom(1000,5000), state: "new", label: "登入驗證開發與測試", tags: "登入,開發", hex: color(getRandom(1,5))},
-                  { id: getRandom(1000,5000), state: "done", label: "登入驗證設計", tags: "登入, 設計", hex: color(getRandom(1,5))},
-                  { id: getRandom(1000,5000), state: "new", label: "UI Design", tags: "UI, 設計", hex: color(getRandom(1,5))},
-                  { id: getRandom(1000,5000), state: "new", label: "資料庫設計", tags: "資料庫設計, 設計", hex: color(getRandom(1,5))},
-                  { id: getRandom(1000,5000), state: "new", label: "專案選單數計", tags: "選單, 設計", hex: color(getRandom(1,5))},
-                  { id: getRandom(1000,5000), state: "new", label: "任務管理設計", tags: "任務管理, 設計", hex: color(getRandom(1,5))},
+                {}
+                //   { id: getRandom(1000,5000), state: "todo", label: "SRS撰寫", tags: "SRS", hex: color(getRandom(1,5))},
+                //   { id: getRandom(1000,5000), state: "progress", label: "Prototyping", tags: "Prototype", hex: color(getRandom(1,5))},
+                //   { id: getRandom(1000,5000), state: "todo", label: "登入驗證開發與測試", tags: "登入,開發", hex: color(getRandom(1,5))},
+                //   { id: getRandom(1000,5000), state: "done", label: "登入驗證設計", tags: "登入, 設計", hex: color(getRandom(1,5))},
+                //   { id: getRandom(1000,5000), state: "todo", label: "UI Design", tags: "UI, 設計", hex: color(getRandom(1,5))},
+                //   { id: getRandom(1000,5000), state: "progress", label: "資料庫設計", tags: "資料庫設計, 設計", hex: color(getRandom(1,5))},
+                //   { id: getRandom(1000,5000), state: "progress", label: "專案選單數計", tags: "選單, 設計", hex: color(getRandom(1,5))},
+                //   { id: getRandom(1000,5000), state: "progress", label: "任務管理設計", tags: "任務管理, 設計", hex: color(getRandom(1,5))},
          ],
          dataType: "array",
          dataFields: fields
      };
     var dataAdapter = new $.jqx.dataAdapter(source);
+
     var resourcesAdapterFunc = function () {
         var resourcesSource =
         {
-            localData: [// Fake Data
-                  { id: 0, name: "No name",  common: true },
-                  { id: 1, name: "Andrew Fuller"},
-                  { id: 2, name: "Janet Leverling" },
-                  { id: 3, name: "Steven Buchanan"  },
-                  { id: 4, name: "Nancy Davolio" },
-                  { id: 5, name: "Michael Buchanan"},
-                  { id: 6, name: "Margaret Buchanan"},
-                  { id: 7, name: "Robert Buchanan"},
-                  { id: 8, name: "Laura Buchanan"  },
-                  { id: 9, name: "Laura Buchanan"  }
-            ],
+            localData: projectMember,
             dataType: "array",
             dataFields: [// 資料型態
                  { name: "id", type: "number" },
@@ -61,10 +85,6 @@ $(document).ready(function () {
         };
         var resourcesDataAdapter = new $.jqx.dataAdapter(resourcesSource);
         return resourcesDataAdapter;
-    }
-
-    var getIconClassName = function () {
-        return "jqx-icon-plus-alt";
     }
     
     // 畫出看板
@@ -99,18 +119,19 @@ $(document).ready(function () {
                 $(element).find(".jqx-kanban-item-text").css('color', textColor[colorArray.indexOf(item.color)]);// 卡片文字顏色
         },
         // 定義看板行
-        columns: [
-            { text: "TO DO", iconClassName: getIconClassName(), dataField: "new" },
-            { text: "In Progress", iconClassName: getIconClassName(), dataField: "work" , maxItems: 5},
-            { text: "Done", iconClassName: getIconClassName(), dataField: "done" }
-        ],
+        columns: projectAttr,
+        // [
+        //     { text: "TO DO", iconClassName: "jqx-icon-plus-alt", dataField: "todo" },
+        //     { text: "In Progress", iconClassName: "jqx-icon-plus-alt", dataField: "progress" , maxItems: 5},
+        //     { text: "Done", iconClassName: "jqx-icon-plus-alt", dataField: "done" }
+        // ],
         // 看板行標題樣式
         columnRenderer: function (element, collapsedElement, column) {
             var columnItems = $("#kanban").jqxKanban('getColumnItems', column.dataField).length;
             element.find(".jqx-kanban-column-header-title")
             .css('height', '50px')
             .css('line-height', '50px');
-            if (column.dataField == "work"){
+            if (column.dataField == "progress"){
                 // update header's status.
                 element.find(".jqx-kanban-column-header-title").html("<p style='line-height: 25px;'>" + column.text + "<br><x class='work-items'>" + columnItems + "/" + (column.maxItems-1) + "</x></p>");
                 // update collapsed header's status.
@@ -123,9 +144,6 @@ $(document).ready(function () {
                 else
                     workItems.css('color', '');
             }
-            // else {
-            //     element.find(".jqx-kanban-column-header-title").html("<p>" + column.text + "</p>");
-            // }
             $(".jqx-kanban-column-header-title").css('left', '-80px');
             $(".jqx-kanban-column-header-status").css('left', '-80px');
         }
@@ -182,15 +200,20 @@ $(document).ready(function () {
     $('.jqx-kanban-item-text').addClass('kanban-item-text')
     .removeClass('jqx-kanban-item-text');
     $('.jqx-kanban-item-color-status').remove();
-    // 調整大小
-    // $('#kanban').resizable({
-    //     alsoResize: '.jqx-kanban-column-container',
-    // });
-});
 
+}
+
+
+/////////////////////////////////////////////////////////
+//              獨立function
+/////////////////////////////////////////////////////////
+
+
+
+// get random number
 function getRandom(min,max){
     return Math.floor(Math.random()*(max-min+1))+min;
-};
+}
 
 // 把RGB轉成16進位格式
 var rgbToHex = function (rgb) { 
@@ -202,5 +225,5 @@ var rgbToHex = function (rgb) {
     })
     b = "#"+b.join("");
     return b;
-};
+}
 
