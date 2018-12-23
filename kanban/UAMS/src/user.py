@@ -27,6 +27,9 @@ class User:
         self.username = None
         self.project_list = list()
 
+        self._localId = None
+        self._idToken = None
+
     def create(self, request):
         """註冊"""
         self.username = request.POST.get('username')  # 帳號 注意是唯一的!
@@ -71,18 +74,22 @@ class User:
             self.name = meta['name']
             self.username = self._get_username_by_email()
             self.project_list = meta['project_list']
+            self._localId = self.user['localId']
+            self._idToken = self.user['idToken']
             return request
         else:
             message = "Unknown Error"
             return message
 
-    def authorize(self, idToken, localId):
+    def authorize(self, request):
         """驗證使用者，未登入者限制權限"""
         current_user = self.authentication.current_user
+        if current_user is None:
+            return False
         localId_real = current_user['localId']
-        localId_session = localId
+        localId_session = request.session['localId']
         token_real = current_user['idToken']
-        token_session = idToken
+        token_session = request.session['idToken']
         EXPIRED = False
         try:
             self.authentication.get_account_info(token_session)

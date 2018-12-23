@@ -1,0 +1,15 @@
+<div id="navbar" class="noto-light" style="overflow: hidden;">
+    <div>
+        <ul>
+            {% if not request.session.idToken %}
+                <li uk-toggle="target: #sign-up"><button class="noto kb-menu-button-text">Sign Up</button></li>
+
+                <li uk-toggle="target: #login"><button class="noto kb-menu-button-text">Login</button></li>
+                
+            {% else %}
+                <li>Hi, {{ request.session.username }}</li>
+                <li><a href="/signout/"><button class="noto kb-menu-button-text">Sign Out</button></a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>

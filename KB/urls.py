@@ -29,6 +29,8 @@ urlpatterns = [
     url(r'^login/$', views.Login.as_view()),
     url(r'^signup/', views.SignUp.as_view()),
     url(r'^signout/$', views.SignOut.as_view()),
+    url(r'^allUserIdJSON/$', views.AllUserJSON.as_view()),
+    url(r'^board/create/$', views.CreateProject.as_view()),
 ]
 
 if not RUNNING_DEVSERVER:

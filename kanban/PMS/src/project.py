@@ -26,14 +26,14 @@ class Project:
         self.name = request.POST.get('name')
         self.owner = request.POST.get('owner')
         try:
-            self.members = request.POST.get('members')  # type: List[str]
+            self.members = request.POST.get('members')  # type: str
         finally:  # 一開始建立專案可以不加入其他人
             pass
 
         project_data = {
             'name': self.name,  # type: str
             'owner': self.owner,  # type: str
-            'members': self.members,  # type: List[str]
+            'members': self._member_parser(self.members),  # type: List[str]
             'columns': self.columns  # type: Dict[str: List[str]]
         }
         ref = self.project_collection.document()
@@ -43,8 +43,8 @@ class Project:
 
     def add_members(self, request):
         """在舊專案新增成員"""
-        members_to_add = request.POST.get('members-to-add')  # type: List[str]
-        self.members.extend(members_to_add)
+        members_to_add = request.POST.get('members-to-add')  # type: str
+        self.members.extend(self._member_parser(members_to_add))  # type: List[str]
         self.project_document.update(
             {'members': self.members}
         )
@@ -113,3 +113,7 @@ class Project:
     def delete_project(self):
         self.project_document.delete()
         self.__init__(self.firebase)
+
+    def _member_parser(self, members_str):
+        result = [x.strip() for x in members_str.split(',')]
+        return result  # type: List[str]
