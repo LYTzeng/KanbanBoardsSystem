@@ -8,7 +8,7 @@ from kanban.UAMS.src.collection import GlobalUser
 from kanban.PMS.src.project import Project
 from kanban.TMS.src.task import Task
 from kanban.firebase.setup import Firebase, Pyrebase
-from typing import List
+from typing import List, Dict
 
 
 RUNNING_DEVSERVER = (len(sys.argv) > 1 and sys.argv[1] == 'runserver')  # TRUE: 開發環境, FALSE: Production
@@ -22,12 +22,15 @@ project = Project(firebase)  # 專案物件
 class KanbanBoard(View):
     def get(self, request):
         # 驗證登入是否過期
-        if not user.authorize(request) or 'idToken' not in request.session:
+        if 'idToken' not in request.session:
             return HttpResponseRedirect("/")
+        # 刷新使用者狀態
+        user.refresh()
         # 屬於user的專案列表
-        project_list = user.project_list  # type: List[str]
-        if project_list == []:
-            project_list = False
+        project_name_id_dict = project.get_proj_name_by_id_dict(user.project_list)  # type: Dict[str, str]
+        project_list = user.project_list  # type: List[str] # project id
+        # 開啟第一個專案
+        proj_data = project.get_board(project_id=project_list[0])
         return render(request, "board.html", locals())
 
 
@@ -36,10 +39,10 @@ class KanbanSettings(View):
         return render(request, "settings.html")
 
 
-class KanbanProjData(View):
+class KanbanProjJSON(View):
     def get(self, request):
-        response = JsonResponse({"json": "response"})
-        return response
+        data = project.get_board(project_id=project.project_id)
+        return JsonResponse(data)
 
 
 class Index(View):

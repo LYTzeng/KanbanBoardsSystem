@@ -1,0 +1,42 @@
+<!--start form 建立專案-->
+<form action="/board/create/" method="POST" name="create" class="uk-grid-small" uk-grid>
+    <fieldset class="uk-fieldset">
+        <legend class="uk-legend noto">Create Project</legend>
+        <hr>
+        {% csrf_token %}
+        <div class="uk-inline uk-margin-small uk-width-1-1">
+            <span class="uk-form-icon" uk-icon="icon: folder"></span>
+            <input class="uk-input" type="text" name="name" placeholder="專案名稱" required/>
+        </div>
+        <div class="uk-inline uk-margin-small uk-width-1-1">
+            <span class="uk-form-icon" uk-icon="icon: user"></span>
+            <input class="uk-input" type="text" name="owner" placeholder="管理員" required/>
+        </div>
+        <div class="uk-inline uk-margin-small uk-width-1-1">
+            <ul id="member-input" style="padding: 0; margin-bottom: 0;">
+            </ul>
+        </div>
+        <input class="uk-button-primary uk-button uk-align-center uk-margin-small noto"
+               type="submit" style="font-size: 16px; background: #139c91; color: azure;" value="建立專案"/>
+    </fieldset>
+</form>
+<!--end form 建立專案-->
+
+<!--start 加入成員 tags input-->
+<script type="text/javascript">
+    var allUserID = new Array();
+    $.getJSON("/allUserIdJSON/", function(result){
+        allUserID = result;
+        $("#member-input").tagit({
+            fieldName: "members",
+            autocomplete: {delay: 0, minLength: 4, source: allUserID},
+            showAutocompleteOnFocus: false,
+            singleField: true,
+            tagLimit: null,
+            caseSensitive: true,
+            allowDuplicates: false,
+        });
+        $("#member-input").data("ui-tagit").tagInput.addClass('uk-input');
+        $("#member-input").data("ui-tagit").tagInput.attr('placeholder', '加入其他使用者');
+    })
+</script>

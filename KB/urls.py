@@ -13,7 +13,7 @@ Including another URLconf
     1. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 import sys
-from django.conf.urls import include, url
+from django.conf.urls import url
 from django.conf.urls.static import static
 from django.conf import settings
 from kanban import views
@@ -25,7 +25,7 @@ urlpatterns = [
     url(r'^board/$', views.KanbanBoard.as_view()),
     url(r'^$', views.Index.as_view()),
     url(r'^index/(\d+)/$', views.Index.as_view()),
-    url(r'^KanbanProjJSON/$', views.KanbanProjData.as_view()),
+    url(r'^KanbanProjJSON/$', views.KanbanProjJSON.as_view()),
     url(r'^login/$', views.Login.as_view()),
     url(r'^signup/', views.SignUp.as_view()),
     url(r'^signout/$', views.SignOut.as_view()),

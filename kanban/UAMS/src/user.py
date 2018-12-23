@@ -189,3 +189,10 @@ class User:
         for member in members:
             if self.username == member: return True
         return False
+
+    def refresh(self):
+        """刷新Class狀態"""
+        data = self.user_info_db.document(self.username).get().to_dict()
+        self.email = data['email']
+        self.name = data['name']
+        self.project_list = data['project_list']
