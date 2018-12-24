@@ -136,3 +136,10 @@ class Project:
             data = self.project_collection.document(id).get().to_dict()
             names.append({"id": id, "name": data['name']})
         return names  # type: dict
+
+    def get_project_task_ids(self):
+        task_ids = self.project_document.collection("tasks").get()
+        task_id_list = list()        
+        for id in task_ids:
+            task_id_list.append(id.id)
+        return task_id_list

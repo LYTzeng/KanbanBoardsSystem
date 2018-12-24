@@ -42,6 +42,7 @@ class KanbanSettings(View):
 class KanbanProjJSON(View):
     def get(self, request):
         data = project.get_board(project_id=project.project_id)
+        task = Task(project.project_id)
         return JsonResponse(data)
 
 
