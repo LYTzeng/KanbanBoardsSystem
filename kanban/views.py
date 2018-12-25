@@ -2,7 +2,7 @@ import sys
 from django.shortcuts import render
 from django.views.generic import View
 from django.template import RequestContext
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from kanban.UAMS.src.user import User
 from kanban.UAMS.src.collection import GlobalUser
 from kanban.PMS.src.project import Project
@@ -19,6 +19,11 @@ global_user = GlobalUser(firebase)  # 全體使用者
 project = Project(firebase)  # 專案物件
 
 
+class Index(View):
+    def get(self, request):
+        return render(request, "index.html")
+
+
 class KanbanBoard(View):
     def get(self, request):
         # 驗證登入是否過期
@@ -29,8 +34,15 @@ class KanbanBoard(View):
         # 屬於user的專案列表
         project_name_id_dict = project.get_proj_name_by_id_dict(user.project_list)  # type: Dict[str, str]
         project_list = user.project_list  # type: List[str] # project id
-        # 開啟第一個專案
-        if project_name_id_dict != [] : proj_data = project.get_board(project_id=project_list[0])
+        if 'projNum' not in request.GET:
+            # 開啟第一個專案
+            if project_name_id_dict != [] : proj_data = project.get_board(project_id=project_list[0])
+            current_project_id = project_list[0]
+        else:
+            proj_number = int(request.GET.get('projNum'))
+            proj_data = dict()
+            if project_name_id_dict != []: proj_data = project.get_board(project_id=project_list[proj_number])
+            current_project_id = project_list[proj_number]
         return render(request, "board.html", locals())
 
 
@@ -42,13 +54,11 @@ class KanbanSettings(View):
 class KanbanProjJSON(View):
     def get(self, request):
         data = project.get_board(project_id=project.project_id)
-        task = Task(project.project_id)
         return JsonResponse(data)
 
-
-class Index(View):
-    def get(self, request):
-        return render(request, "index.html")
+'''
+    PMS View
+'''
 
 
 class CreateProject(View):
@@ -57,6 +67,49 @@ class CreateProject(View):
         project.create(request)
         print(project.name, project.owner, project.members)
         return HttpResponseRedirect("/board/")
+
+
+class GetAllProjMenbers(View):
+    """取得專案所有成員"""
+    def get(self):
+        members_list = project.members
+        return JsonResponse(members_list, safe=False)
+
+'''
+    TMS View
+'''
+
+
+class MoveTask(View):
+    """移動卡片"""
+    def post(self, request):
+        task_id = request.POST.get('taskId')
+        source = request.POST.get('src')
+        destination = request.POST.get('dst')
+        project.move_task(task_id, source, destination)
+        return HttpResponse("OK")
+
+
+class AddTask(View):
+    """新增卡片"""
+    def post(self, request):
+        task = Task(firebase, project.project_id)
+        task.add_task(request)
+        project.add_task(task.task_id, request.POST.get('columns'))
+        return HttpResponseRedirect("/board/")
+
+class DeleteTask(View):
+    """刪除卡片"""
+    def post(self, request):
+        project.del_task(request.POST.get('taskId'), request.POST.get('column'))
+        task = Task(firebase, project.project_id)
+        task.get(request)
+        task.del_task()
+        return HttpResponse("OK")
+
+'''
+    UAMS View
+'''
 
 
 class Login(View):

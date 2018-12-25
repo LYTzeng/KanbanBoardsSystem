@@ -31,6 +31,10 @@ urlpatterns = [
     url(r'^signout/$', views.SignOut.as_view()),
     url(r'^allUserIdJSON/$', views.AllUserJSON.as_view()),
     url(r'^board/create/$', views.CreateProject.as_view()),
+    url(r'^board/movetask/$', views.MoveTask.as_view()),
+    url(r'^board/allProjMember/$', views.GetAllProjMenbers.as_view()),
+    url(r"^board/addTask/$", views.AddTask.as_view()),
+    url(r'^board/deleteTask/$', views.DeleteTask.as_view()),
 ]
 
 if not RUNNING_DEVSERVER:

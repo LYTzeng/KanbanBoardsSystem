@@ -5,7 +5,8 @@
 <!-- d3.js -->
 <script src="{% static 'js/d3.v4.min.js' %}" type="text/javascript"></script>
 <script src="{% static 'js/d3-scale-chromatic.v1.min.js' %}" type="text/javascript"></script>
-
+<!--將CSRF token傳到JS-->
+<script>var csrftoken = '{{ csrf_token }}';</script>
 {% endblock %}
 
 
@@ -100,9 +101,9 @@
     #kanban {
         text-align: center;
         left: 50%;
-        height: auto;
-        width: 100%;
-        overflow-y: hidden;
+        height: 494px;
+        width: 800px;
+        /* overflow: hidden; */
         box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.116), 0 4px 10px 0 rgba(0, 0, 0, 0.089);
     }
     #kanban * {
@@ -142,6 +143,21 @@
     .ui-autocomplete {
         z-index: 99999;
     }
+    #kb-card-color-1 {
+        background-color: #556270;
+    }
+    #kb-card-color-2 {
+        background-color: #4ecdc4;
+    }
+    #kb-card-color-3 {
+        background-color: #c7f464;
+    }
+    #kb-card-color-4 {
+        background-color: #ff6b6b;
+    }
+    #kb-card-color-5 {
+        background-color: #c44d58;
+    }
 </style>
 {% endblock %}
 
@@ -173,7 +189,10 @@
         </li>
         <div class="noto-light">
         {% for project in project_name_id_dict %}
-        <li id="{{project.id}}" class="list sidenav-text"><div uk-icon="chevron-right"></div>{{project.name}}</li>
+        <li id="{{project.id}}" class="list sidenav-text" onclick="projectClick({{ forloop.counter0 }})" 
+            style="cursor: pointer;{% if current_project_id == project.id %} color: #fff; {% endif %}">
+            <div uk-icon="chevron-right"></div>{{project.name}}
+        </li>
         {% endfor %}
         </div>
     </ul>
@@ -217,8 +236,8 @@
 </div>
 <!--end 主要頁面-->
 
+<!--start 側邊選單JS-->
 <script type="text/javascript">
-    // 側邊選單JS
     var isOpenNav = true;
     var opener = document.getElementById("nav-opener");
     var openerArrow = document.getElementsByTagName("i")[0].getElementsByTagName("div")[0];
@@ -250,7 +269,17 @@
             document.getElementsByTagName("i")[0].style.left = "-25%";
         }
     }
+
+    function projectClick(index) {
+        var url = '/board/';
+        var form = $("<form action='" + url + "'method='GET'>" + "{% csrf_token %}" +
+        "<input type='text' name='projNum' value='" + index + "' />" +
+        "</form>");
+        $('body').append(form);
+        form.submit();
+    }
 </script>
+<!--end 側邊選單JS-->
 
 {% if project_list %}
 <!-- start 看板的JavaScript -->
@@ -266,5 +295,14 @@
     </div>
 </div>
 <!-- end 建立專案視窗 -->
-    
+
+<!-- start 建立卡片視窗 -->
+<div id="new-card" class="uk-flex-top noto" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        {% include "create_card.html" %}
+    </div>
+</div>
+<!-- end 建立卡片視窗 -->
+
 {% endblock %}

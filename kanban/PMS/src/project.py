@@ -2,6 +2,7 @@
 建立專案、查詢專案成員、權限、專案Metadata、任務移動/增加/刪除 等
 """
 from typing import (List, Dict)
+from kanban.TMS.src.task import Task
 
 
 class Project:
@@ -85,6 +86,14 @@ class Project:
         self.members = project_data['members']
         self.columns = project_data['columns']
         self.attr = project_data['attr']
+        # 加入卡片資料
+        task_id_list = self.get_project_task_ids()
+        task_data = dict()
+        for id in task_id_list:
+            task = Task(self.firebase, self.project_id)
+            task_dict = task.get(task_id=id)
+            task_data[id] = task_dict
+        project_data['tasks'] = task_data
         return project_data  # type: dict
 
     def move_task(self, task_id: str, src: str, dst: str):

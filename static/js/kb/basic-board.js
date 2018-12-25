@@ -3,7 +3,7 @@ var textColor = ['white','black','black','white','white'];
 
 var projectMember = new Array();  // 專案成員陣列
 var projectAttr = new Array();  // 專案欄位
-var projectCol = new Array();  // 專案所有卡片與欄位
+var taskCard = new Array();  // 專案所有卡片與欄位
 // [異步] 取得專案資料JSON
 $.getJSON("/KanbanProjJSON/", function(projectData){
     for (var i = 0 ; i < projectData['members'].length ;i++){
@@ -19,19 +19,30 @@ $.getJSON("/KanbanProjJSON/", function(projectData){
             projectAttr.push({text: colName, dataField: colName, iconClassName: "jqx-icon-plus-alt"});
         }
 
-        if (projectData["columns"][colName] != undefined){
-            for (var j; j < projectData["columns"][colName].length; j++){
-                // TODO: 讀取Task sub-collection的卡片
+
+        if (isEmpty(projectData['tasks'])){
+            taskCard = [{}];
+        }
+        else{
+            for (var j = 0; j < projectData['columns'][colName].length ; j++){
+                taskID = projectData['columns'][colName][j];
+                // if(taskID == undefined){
+                //     taskCard = [{}];
+                // }
+                taskContent = projectData['tasks'][taskID]["content"];
+                taskOwner = projectData['tasks'][taskID]["owner"];
+                taskColor = projectData['tasks'][taskID]["color"];
+                taskCard.push({ id: taskID, state: colName, label: taskContent, tags: taskOwner, hex: taskColor });
             }
         }
     }
 
     $(document).ready(mainPage());  // jQuery
 })
+// END [異步] 取得專案資料JSON
 
 
-
-// 主要看板JS
+// START 主要看板JS
 function mainPage () {
 
     var color = d3.scaleOrdinal()
@@ -55,17 +66,7 @@ function mainPage () {
 
     var source =
      {
-         localData: [// Fake Data
-                {}
-                //   { id: getRandom(1000,5000), state: "todo", label: "SRS撰寫", tags: "SRS", hex: color(getRandom(1,5))},
-                //   { id: getRandom(1000,5000), state: "progress", label: "Prototyping", tags: "Prototype", hex: color(getRandom(1,5))},
-                //   { id: getRandom(1000,5000), state: "todo", label: "登入驗證開發與測試", tags: "登入,開發", hex: color(getRandom(1,5))},
-                //   { id: getRandom(1000,5000), state: "done", label: "登入驗證設計", tags: "登入, 設計", hex: color(getRandom(1,5))},
-                //   { id: getRandom(1000,5000), state: "todo", label: "UI Design", tags: "UI, 設計", hex: color(getRandom(1,5))},
-                //   { id: getRandom(1000,5000), state: "progress", label: "資料庫設計", tags: "資料庫設計, 設計", hex: color(getRandom(1,5))},
-                //   { id: getRandom(1000,5000), state: "progress", label: "專案選單數計", tags: "選單, 設計", hex: color(getRandom(1,5))},
-                //   { id: getRandom(1000,5000), state: "progress", label: "任務管理設計", tags: "任務管理, 設計", hex: color(getRandom(1,5))},
-         ],
+         localData: taskCard,
          dataType: "array",
          dataFields: fields
      };
@@ -74,7 +75,7 @@ function mainPage () {
     var resourcesAdapterFunc = function () {
         var resourcesSource =
         {
-            localData: projectMember,
+            localData: projectMember, // 成員
             dataType: "array",
             dataFields: [// 資料型態
                  { name: "id", type: "number" },
@@ -94,8 +95,13 @@ function mainPage () {
         // 自訂Task卡片物件的模板
         template: "<div class='jqx-kanban-item'>"
         + "<div class='jqx-kanban-item-color-status'></div>"
+        + "<div class='jqx-icon jqx-icon-close jqx-kanban-item-template-content jqx-kanban-template-icon'></div>"
         + "<div class='jqx-kanban-item-text'></div>"
         + "<div class='jqx-kanban-item-footer'></div>"
+        + "<ul class='uk-iconnav uk-position-bottom-right uk-margin-right uk-margin-small-bottom'>"
+        + "<li><div uk-icon='pencil'></div></li>"
+        + "<li><div uk-icon='close' class='close'></div></li>"
+        + "</ul>"
         + "</div>",
         theme: "light",
         height: "494px",
@@ -120,11 +126,7 @@ function mainPage () {
         },
         // 定義看板行
         columns: projectAttr,
-        // [
-        //     { text: "TO DO", iconClassName: "jqx-icon-plus-alt", dataField: "todo" },
-        //     { text: "In Progress", iconClassName: "jqx-icon-plus-alt", dataField: "progress" , maxItems: 5},
-        //     { text: "Done", iconClassName: "jqx-icon-plus-alt", dataField: "done" }
-        // ],
+
         // 看板行標題樣式
         columnRenderer: function (element, collapsedElement, column) {
             var columnItems = $("#kanban").jqxKanban('getColumnItems', column.dataField).length;
@@ -146,51 +148,75 @@ function mainPage () {
             }
             $(".jqx-kanban-column-header-title").css('left', '-80px');
             $(".jqx-kanban-column-header-status").css('left', '-80px');
+            $(".jqx-icon-plus-alt").attr("uk-toggle", "target: #new-card");
         }
     }); 
     var itemIndex = 0;// 新增卡片的編號從0開始
+
     // 新增Task卡片
     $('#kanban').on('columnAttrClicked', function (event) {
         var args = event.args;
+        document.getElementById("card-column").value = args.column['text'];
+        args.cancelToggle = true;
         if (args.attribute == "button") {
-            args.cancelToggle = true;
-            if (!args.column.collapsed) {
-                // 新增卡片的顏色
-                var inputColor = color(getRandom(1,5));
-                // 點選+號要做的事：新增卡片
-                $('#kanban').jqxKanban('addItem', { 
-                    status: args.column.dataField, 
-                    text: "<input placeholder='Input task name here.' style='width: 96%; margin-top:2px; border-color: transparent; text-align: center; color: "+ textColor[colorArray.indexOf(inputColor)] +"; line-height:20px; height: 20px;' class='jqx-input' id='newItem" + itemIndex + "' value=''/>", 
-                    tags: "new task", 
-                    color: inputColor, 
-                    resourceId: Math.floor(Math.random() * 4), 
-                    className: "new-task" 
-                });
-                // 打字的地方
-                var input =  $("#newItem" + itemIndex);
-                input.mousedown(function (event) {
-                    event.stopPropagation();
-                });
-                input.mouseup(function (event) {
-                    event.stopPropagation();
-                });
-                input.keydown(function (event) {
-                    if (event.keyCode == 13) {
-                        $("<span>" + $(event.target).val() + "</span>").insertBefore($(event.target));
-                        $(event.target).remove();
-                    }
-                });
-                input.focus();
-                itemIndex++;
-                // 新增的Task一樣要改成自訂的樣式
-                $('.new-task > .jqx-kanban-item-text')
+            $("#card-submit").click(function() {
+                
+                if (!args.column.collapsed) {
+                    $('#kanban').jqxKanban('addItem', 
+                    { 
+                        status: document.getElementById("card-columns").value, 
+                        text: document.getElementById("card-content").value, 
+                        tags: document.getElementById("card-owner").value, 
+                        color: document.getElementById("card-color").value
+                    });
+                    // 新增的Task一樣要改成自訂的樣式
+                    $('.new-task > .jqx-kanban-item-text')
                     .css('color', textColor[colorArray.indexOf(inputColor)])
                     .addClass('kanban-item-text')
                     .removeClass('jqx-kanban-item-text');
-                $('.new-task > .jqx-kanban-item-color-status').remove();
-                $('.new-task').removeClass('new-task');  
-            }
+                    $('.new-task > .jqx-kanban-item-color-status').remove();
+                    $('.new-task').removeClass('new-task'); 
+                }
+            })
         }
+            // args.cancelToggle = true;
+            // if (!args.column.collapsed) {
+            //     // 新增卡片的顏色
+            //     var inputColor = color(getRandom(1,5));
+            //     // 點選+號要做的事：新增卡片
+            //     $('#kanban').jqxKanban('addItem', { 
+            //         status: args.column.dataField, 
+            //         text: "<input placeholder='Input task name here.' style='width: 96%; margin-top:2px; border-color: transparent; text-align: center; color: "+ textColor[colorArray.indexOf(inputColor)] +"; line-height:20px; height: 20px;' class='jqx-input' id='newItem" + itemIndex + "' value=''/>", 
+            //         tags: "new task", 
+            //         color: inputColor, 
+            //         resourceId: Math.floor(Math.random() * 4), 
+            //         className: "new-task" 
+            //     });
+            //     // 打字的地方
+            //     var input =  $("#newItem" + itemIndex);
+            //     input.mousedown(function (event) {
+            //         event.stopPropagation();
+            //     });
+            //     input.mouseup(function (event) {
+            //         event.stopPropagation();
+            //     });
+            //     input.keydown(function (event) {
+            //         if (event.keyCode == 13) {
+            //             $("<span>" + $(event.target).val() + "</span>").insertBefore($(event.target));
+            //             $(event.target).remove();
+            //         }
+            //     });
+            //     input.focus();
+            //     itemIndex++;
+                // // 新增的Task一樣要改成自訂的樣式
+                // $('.new-task > .jqx-kanban-item-text')
+                //     .css('color', textColor[colorArray.indexOf(inputColor)])
+                //     .addClass('kanban-item-text')
+                //     .removeClass('jqx-kanban-item-text');
+                // $('.new-task > .jqx-kanban-item-color-status').remove();
+                // $('.new-task').removeClass('new-task');  
+        //     }
+        // }
     });
 
     // 以下是把jQWidget預設樣式改掉的部分
@@ -201,8 +227,44 @@ function mainPage () {
     .removeClass('jqx-kanban-item-text');
     $('.jqx-kanban-item-color-status').remove();
 
-}
 
+    // 卡片OnMove
+    $('#kanban').on('itemMoved', function (event) {
+        var args = event.args;
+        var itemId = args.itemId;
+        var oldParentId = args.oldParentId;
+        var newParentId = args.newParentId;
+        var itemData = args.itemData;
+        var oldColumn = args.oldColumn;
+        var newColumn = args.newColumn;
+        console.log(itemId, oldColumn["text"], newColumn["text"]);
+        var src = oldColumn["text"];
+        var dst = newColumn["text"];
+        $.ajax({
+            method: 'POST',
+            url: '/board/movetask/',
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                taskId: itemId,
+                "src": src,
+                "dst": dst
+            },
+            success: function (data) {
+                 //this gets called when server returns an OK response
+                 console.log("sent");
+            },
+            error: function (data) {
+                 console.log("not sent");
+            }
+        })
+        console.log("sent!");
+    });
+
+    for (var i = 0 ; i < taskCard.length ; i++){
+        closeButton(taskCard[i]['id'], taskCard[i]['state']);
+    }
+}
+// END 主要看板JS
 
 /////////////////////////////////////////////////////////
 //              獨立function
@@ -227,3 +289,32 @@ var rgbToHex = function (rgb) {
     return b;
 }
 
+function closeButton (id, col){
+    $("#kanban_" + id + " > ul > li >.close").click(function(){
+        $.ajax({
+            method: 'POST',
+            url: '/board/deleteTask/',
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                "taskId": id,
+                "column": col
+            },
+            success: function (data) {
+                 //this gets called when server returns an OK response
+                 console.log("sent");
+            },
+            error: function (data) {
+                 console.log("not sent");
+            }
+        })
+        $("#kanban_" + id).remove();
+    })
+}
+
+function isEmpty(obj) {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
+}

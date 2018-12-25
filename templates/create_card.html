@@ -1,0 +1,57 @@
+<!--start form 建立卡片-->
+<form action="/board/addTask/" method="POST" name="create" class="uk-grid-small" uk-grid>
+    <!-- <form name="create" class="uk-grid-small" uk-grid></form> -->
+    <fieldset class="uk-fieldset">
+        <legend class="uk-legend noto">New Card</legend>
+        <hr>
+        {% csrf_token %}
+        <div id="card-columns" class="uk-inline uk-margin-small uk-width-1-1">
+            <span>add to:</span>
+            <input id="card-column" class="uk-input" type="text" name="columns" required readonly/>
+        </div>
+        <div class="uk-inline uk-margin-small uk-width-1-1">
+            <ul id="owner-input" style="padding: 0; margin-bottom: 0;">
+            </ul>
+        </div>
+        <div class="uk-inline uk-margin-small uk-width-1-1">
+            <input id="card-content" class="uk-input" type="text" name="content" placeholder="任務內容" required/>
+        </div>
+        <div class="uk-inline uk-margin-small uk-width-1-1">
+            <select class="uk-select" id="card-color" name="color">
+                <option id="kb-card-color-1" value="#556270">#556270</option>
+                <option id="kb-card-color-2" value="#4ecdc4">#4ecdc4</option>
+                <option id="kb-card-color-3" value="#c7f464">#c7f464</option>
+                <option id="kb-card-color-4" value="#ff6b6b">#ff6b6b</option>
+                <option id="kb-card-color-5" value="#c44d58">#c44d58</option>
+            </select>
+        </div>
+        <input id="card-submit" class="uk-button-primary uk-button uk-align-center uk-margin-small noto"
+               type="submit" style="font-size: 16px; background: #139c91; color: azure;" value="建立"/>
+        <!-- <div class="uk-inline uk-margin-small uk-width-1-1">
+            <button id="card-submit" class="uk-button-primary uk-button uk-margin-small uk-align-center noto"
+            style="font-size: 16px; background: #139c91; color: azure;">建立</button>
+        </div> -->
+    </fieldset>
+
+</form>
+<!--end form 建立卡片-->
+
+<script type="text/javascript">
+    var allUserID = new Array();
+    $.getJSON("/allUserIdJSON/", function(result){
+        allUserID = result;
+        $("#owner-input").tagit({
+            fieldName: "owner",
+            autocomplete: {delay: 0, minLength: 4, source: allUserID},
+            showAutocompleteOnFocus: false,
+            singleField: true,
+            tagLimit: null,
+            caseSensitive: true,
+            allowDuplicates: false,
+        });
+        $("#owner-input").data("ui-tagit").tagInput.addClass('uk-input');
+        $("#owner-input").data("ui-tagit").tagInput.attr('placeholder', '負責人');
+        $("#owner-input").data("ui-tagit").tagInput.attr('required');
+        $("#owner-input").data("ui-tagit").tagInput.attr('id', 'card-owner');
+    })
+</script>

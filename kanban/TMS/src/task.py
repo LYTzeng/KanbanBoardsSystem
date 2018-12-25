@@ -91,7 +91,7 @@ class Task:
         :return: dict 是任務完整的資訊，就是refresh()的回傳值
         """
         if request is not None:
-            self.task_id = request.POST.get('task-id')
+            self.task_id = request.POST.get('taskId')
             data = self.refresh(self.task_id)
             return data
         elif task_id != str():
