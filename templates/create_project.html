@@ -18,6 +18,7 @@
         <div class="uk-inline uk-margin-small uk-width-1-1">
             <span>加入專案成員</span>
             <ul id="member-input" style="margin-bottom: 0;margin-top: 0;">
+                <li class="proj-creator tagit-choice-read-only">{{ username }}</li>
             </ul>
         </div>
 
@@ -43,6 +44,7 @@
         });
         $("#member-input").data("ui-tagit").tagInput.addClass('uk-input uk-margin-small-left');
         $("#member-input").data("ui-tagit").tagInput.attr('placeholder', '請輸入使用者帳號');
+        $(".proj-creator").removeClass("tagit-choice-editable");
     })
-    document.getElementById("project-owner").value = "{{ username }}";
+    document.getElementById("project-owner").value = "{{ username }}";    
 </script>

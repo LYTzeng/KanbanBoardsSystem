@@ -46,7 +46,10 @@
         line-height: 50px;
     }
     .cog {
-        margin-left: 13px;
+        left: 183px;
+        top: 18px;
+        display: block;
+        position:absolute;
     }
     .uk-nav {
         list-style: none;
@@ -166,6 +169,30 @@
     .sk-cube-grid .sk-cube {
         background-color: #40474e;
     }
+    .member-tooltip {
+        background:#1d1d1d;
+        color:#fff;
+        padding:2px;
+        border-radius:5px;
+        position:absolute;
+        min-width:50px;
+        max-width:300px;
+        display:none;
+        z-index: 999999;
+        opacity: 0.9;
+        font-size: 14px;
+    }
+        .member-tooltip:before{
+            content:'';
+            height:3px;
+            width:0;
+            border:7px solid transparent;
+            border-bottom-color:#1d1d1d;
+            position:absolute;
+            top:-16px;
+            left:14px;
+            z-index: 999999;
+        }
 </style>
 {% endblock %}
 
@@ -179,7 +206,7 @@
         <div id="logo" class="sidenav-text">
             <img src="{% static 'media/favicon.svg' %}" style="height: 26px; transform: translate(0, -2px);">
             <b>Kanban Board</b>
-            <div uk-icon="cog" uk-toggle="target: #sign-up" class="cog"></div>
+            <div uk-icon="cog" uk-toggle="target: #sign-up" class="cog" style="cursor:pointer;"></div>
             <div id="sign-up" class="uk-flex-top noto" uk-modal>
                 <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
                     <button class="uk-modal-close-default" type="button" uk-close></button>
@@ -212,17 +239,6 @@
         </li>
     </ul>
     {% endif %}
-    <!-- <ul class="uk-nav uk-nav-default menu-block">
-        <li class="title noto-light sidenav-text">
-            Following
-            <div uk-icon="plus-circle" class="uk-align-right"></div>
-        </li>
-        <div class="noto-light">
-        <li id="project 1" class="list sidenav-text"><div uk-icon="user"></div> Kevin</li>
-        <li id="project 2" class="list sidenav-text"><div uk-icon="user"></div> oscar</li>
-        <li id="project 3" class="list sidenav-text"><div uk-icon="user"></div> Bob</li>
-        </div>
-    </ul> -->
 </div>
 <!--end 側邊選單-->
 

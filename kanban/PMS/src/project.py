@@ -56,13 +56,17 @@ class Project:
     def delete_member(self, request):
         """在舊專案移除成員"""
         member_to_del = request.POST.get('member-to-delete')  # type: str
+        selected_user = self.database.collection('users').document(member_to_del)
         try:
             self.members.remove(member_to_del)
+            proj_under_member = selected_user.get().to_dict()
+            proj_under_member['project_list'].remove(self.project_id)
         except ValueError:
             return "The member has been kicked out!"
         self.project_document.update(
             {'members': self.members}
         )
+        selected_user.update({"project_list": proj_under_member['project_list']})
 
     def rename(self, request):
         """重新命名專案"""
@@ -104,7 +108,6 @@ class Project:
         :param dst:
         :return:
         """
-        # TODO: 整合jqwidget API的動作
         if src and dst not in self.attr:
             raise ValueError
         self.columns[src].remove(task_id)
@@ -152,3 +155,9 @@ class Project:
         for id in task_ids:
             task_id_list.append(id.id)
         return task_id_list
+
+    def is_manager(self, user_id):
+        if self.owner == user_id:
+            return True
+        else:
+            return False

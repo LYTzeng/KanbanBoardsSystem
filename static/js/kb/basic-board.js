@@ -1,10 +1,12 @@
 var colorArray = ['#556270', '#4ecdc4', '#c7f464', '#ff6b6b', '#c44d58'];
 var textColor = ['white','black','black','white','white'];
 
+//-------------------------------
+// 取得專案資料JSON
+//-------------------------------
 var projectMember = new Array();  // 專案成員陣列
 var projectAttr = new Array();  // 專案欄位
 var taskCard = new Array();  // 專案所有卡片與欄位
-// [異步] 取得專案資料JSON
 $.getJSON("/KanbanProjJSON/", function(projectData){
     for (var i = 0 ; i < projectData['members'].length ;i++){
         projectMember.push({id: i, name: projectData['members'][i]}); // [{ id: 1, name: "Andrew Fuller"},...]
@@ -19,7 +21,6 @@ $.getJSON("/KanbanProjJSON/", function(projectData){
             projectAttr.push({text: colName, dataField: colName, iconClassName: "jqx-icon-plus-alt"});
         }
 
-
         if (isEmpty(projectData['tasks']) || !projectData['tasks']){
             taskCard = [{}];
         }
@@ -33,24 +34,13 @@ $.getJSON("/KanbanProjJSON/", function(projectData){
             }
         }
     }
-
     $(document).ready(mainPage());  // jQuery
 })
-// END [異步] 取得專案資料JSON
 
-
-// START 主要看板JS
+//-------------------------------
+// 主要看板function
+//-------------------------------
 function mainPage () {
-
-    var color = d3.scaleOrdinal()
-                .range(colorArray); 
-
-    for (var i = 0; i < colorArray.length; i++) {
-        d3.select("div")            
-            .attr('style', function (d) {
-            return 'background-color: ' + color(i);
-        });
-    }
 
     var fields = [// 資料型態
              { name: "id", type: "string" },
@@ -85,7 +75,9 @@ function mainPage () {
         return resourcesDataAdapter;
     }
     
+    //-------------------------------
     // 畫出看板
+    //-------------------------------
     $('#kanban').jqxKanban({
         resources: resourcesAdapterFunc(),
         source: dataAdapter,
@@ -149,86 +141,79 @@ function mainPage () {
         }
     }); 
 
-
-    // 新增Task卡片
-    var itemIndex = 0;// 新增卡片的編號從0開始
+    // 欄位上方的+號點下去，避免欄位收合
     $('#kanban').on('columnAttrClicked', function (event) {
         var args = event.args;
         document.getElementById("card-column").value = args.column['text']; // 把卡片所屬欄填入
         
         if (args.attribute == "button") {
             args.cancelToggle = true;
-            $("#card-submit").click(function() {
-                
-                if (!args.column.collapsed) {
-                    var dataField = {};
-                    var taskId = "";
-                    $("#create-card-form").submit( function(e) {
-                        e.preventDefault();
-                        dataField = {
-                            column: $("#card-column").val(),
-                            content: $("#card-content").val(), 
-                            color: $("#card-color").val(),
-                            owner: $("#owner-input").tagit("assignedTags")[0]
-                        }
-
-                        $.ajax({
-                            method: 'POST',
-                            url: '/board/addTask/',
-                            data: {
-                                csrfmiddlewaretoken: csrftoken,
-                                "content": dataField.content,
-                                "owner":dataField.owner, 
-                                "color": dataField.color,
-                                "column": dataField.column
-                            },
-                            success: function (data) {
-                                    taskId = data['task_id'];
-                                    closeButton(data['task_id'], dataField.column);
-                                    console.log("sent");
-                                    console.log(taskId);
-                                    $('#kanban').jqxKanban('addItem', 
-                                    { 
-                                        resourceId: taskId,
-                                        status: dataField.column, 
-                                        text: "<div id='in-card-" + taskId +"'></div>" + dataField.content, 
-                                        tags: dataField.owner, 
-                                        color: dataField.color
-                                    });
-                                    // 新增的Task一樣要改成自訂的樣式
-                                    $('.new-task > .jqx-kanban-item-text')
-                                    .css('color', textColor[colorArray.indexOf( dataField.color)])
-                                    .addClass('kanban-item-text')
-                                    .removeClass('jqx-kanban-item-text');
-                                    $('.jqx-kanban-item-color-status').remove();
-                                    $('.new-task').removeClass('new-task'); 
-                                    $(".uk-modal-close-default").click();
-                                    $("#in-card-" + taskId).closest(".jqx-kanban-item").attr("id", "kanban_" + taskId);
-                                    closeButton(taskId, dataField.column);
-                            },
-                            error: function (data) {
-                                    console.log("not sent");
-                            }
-                        })
-
-                    });
-
-                }
-                
-            });
         }
     });
 
-    // 以下是把jQWidget預設樣式改掉的部分
+    //-------------------------------
+    // 新增Task卡片
+    //-------------------------------
+    $("#card-submit").click( function(e) {
+        var dataField = {};
+        var taskId = "";
+        console.log("click()");
+        $(".uk-modal-close-default").click();                    
+        dataField = {
+            column: $("#card-column").val(),
+            content: $("#card-content").val(), 
+            color: $("#card-color").val(),
+            owner: $("#owner-input").tagit("assignedTags")[0]
+        };
+        // 送出 HTTP POST 請求
+        $.ajax({
+            type: "POST",
+            url: "/board/addTask/",
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                "content": dataField.content,
+                "owner":dataField.owner, 
+                "color": dataField.color,
+                "column": dataField.column
+            },
+            datatype: "json" ,
+            encode: true
+        }).done( function (data) {
+            console.log("ajax.done()");
+            taskId = data['task_id'];
+            $('#kanban').jqxKanban('addItem', 
+            { 
+                resourceId: taskId,
+                status: dataField.column, 
+                text: "<div id='in-card-" + taskId +"'></div>" + dataField.content, 
+                tags: dataField.owner, 
+                color: dataField.color
+            });
+            // 新增的Task一樣要改成自訂的樣式
+            $('.new-task > .jqx-kanban-item-text')
+            .css('color', textColor[colorArray.indexOf( dataField.color)])
+            .addClass('kanban-item-text')
+            .removeClass('jqx-kanban-item-text');
+            $('.jqx-kanban-item-color-status').remove();
+            $('.new-task').removeClass('new-task'); 
+            $("#in-card-" + taskId).closest(".jqx-kanban-item").attr("id", "kanban_" + taskId);
+            $('#card-submit').removeAttr('disabled');
+            $("#create-card-form")[0].reset();
+            closeButton(taskId, dataField.column);
+        });
+        e.preventDefault();  
+    });
+
+    //  jQWidget預設樣式更改客製
     $('.jqx-kanban-column-header').css('height', '50px');
     $('.jqx-kanban-column-container').css('padding', '10px');
-    // 這邊可以不用看，把預設Class改鰾文字才能真正居中，不知道為什麼
     $('.jqx-kanban-item-text').addClass('kanban-item-text')
     .removeClass('jqx-kanban-item-text');
     $('.jqx-kanban-item-color-status').remove();
 
-
+    //-------------------------------
     // 卡片OnMove
+    //-------------------------------
     $('#kanban').on('itemMoved', function (event) {
         var args = event.args;
         var itemId = args.itemId;
@@ -250,7 +235,6 @@ function mainPage () {
                 "dst": dst
             },
             success: function (data) {
-                 //this gets called when server returns an OK response
                  console.log("sent");
             },
             error: function (data) {
@@ -259,36 +243,19 @@ function mainPage () {
         })
         console.log("sent!");
     });
-
+    //  加上卡片叉叉的功能
     for (var i = 0 ; i < taskCard.length ; i++){
         closeButton(taskCard[i]['id'], taskCard[i]['state']);
     }
 }
-// END 主要看板JS
-
-/////////////////////////////////////////////////////////
-//              獨立function
-/////////////////////////////////////////////////////////
+//-------------------------------
+// END 主要看板function
+//-------------------------------
 
 
-
-// get random number
-function getRandom(min,max){
-    return Math.floor(Math.random()*(max-min+1))+min;
-}
-
-// 把RGB轉成16進位格式
-var rgbToHex = function (rgb) { 
-    var a = rgb.split("(")[1].split(")")[0];
-    a = a.split(",");
-    var b = a.map(function(x){
-        x = parseInt(x).toString(16);
-        return (x.length==1) ? "0"+x : x;
-    })
-    b = "#"+b.join("");
-    return b;
-}
-
+//-------------------------------
+//  卡片刪除的叉叉按鈕功能
+//-------------------------------
 function closeButton (id, col){
     $("#kanban_" + id + " > ul > li >.close").click(function(){
         $.ajax({
@@ -300,7 +267,6 @@ function closeButton (id, col){
                 "column": col
             },
             success: function (data) {
-                 //this gets called when server returns an OK response
                  console.log("sent");
             },
             error: function (data) {
@@ -311,6 +277,7 @@ function closeButton (id, col){
     })
 }
 
+// 檢查物件是否空的
 function isEmpty(obj) {
     for(var key in obj) {
         if(obj.hasOwnProperty(key))

@@ -43,7 +43,11 @@ class KanbanBoard(View):
             proj_data = dict()
             if project_name_id_dict != []: proj_data = project.get_board(project_id=project_list[proj_number])
             current_project_id = project_list[proj_number]
+        # 補充前端必要參數
         username = user.username
+        is_manager = project.is_manager(username)
+        proj_members = project.members
+        proj_name = project.name
         return render(request, "board.html", locals())
 
 
@@ -76,6 +80,19 @@ class GetAllProjMembers(View):
     def get(self, request):
         members_list = project.members
         return JsonResponse(members_list, safe=False)
+
+
+class DeleteMember(View):
+    """從專案移除成員"""
+    def post(self, request):
+        project.delete_member(request)
+        return HttpResponse("OK")
+
+
+class DeleteProject(View):
+    def post(self, request):
+        project.delete_project()
+        return HttpResponse("OK")
 
 
 '''
