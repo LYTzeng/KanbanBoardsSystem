@@ -6,6 +6,7 @@
     #heading {
         height: 100%;
         width: 100%;
+        z-index: 100;
     }
     #heading-para {
         display: block;
@@ -64,11 +65,33 @@
         position:absolute;
         top: -15%;
     }
+    .kb-board-spinner {
+        position:fixed;
+        left: 50%;
+        top: 40%;
+        transform: translate(-50%, -50%);
+        z-index: 1100;
+        display: none;
+    }
+    .sk-cube-grid .sk-cube {
+        background-color: azure;
+        z-index: 1100;
+    }
+    #spinner-bg {
+        display:none;
+        position:fixed;
+        background-color: #000;
+        opacity: 0.8;
+        width: 100vw;
+        height: 100vh;
+        margin: 0;
+        z-index: 1099;
+    }
 </style>
 {% endblock %}
 
 {% block mainbody %}
-<!-- <div id="heading-para"></div> -->
+<div id="spinner-bg"></div>
 <div id="heading" class="">
     <div id="header1" class="header"></div>
     <div id="header2" class="header"></div>
@@ -81,6 +104,20 @@
         <h3 class="noto uk-text-center uk-light uk-visible@s">Manage your project!</h3><br>
     </div>
 </div>
+
+<!--spinner-->
+<div id="cube-spinner" class="sk-cube-grid kb-board-spinner">
+        <div class="sk-cube sk-cube1"></div>
+        <div class="sk-cube sk-cube2"></div>
+        <div class="sk-cube sk-cube3"></div>
+        <div class="sk-cube sk-cube4"></div>
+        <div class="sk-cube sk-cube5"></div>
+        <div class="sk-cube sk-cube6"></div>
+        <div class="sk-cube sk-cube7"></div>
+        <div class="sk-cube sk-cube8"></div>
+        <div class="sk-cube sk-cube9"></div>
+    </div>
+
 
 {% include "navbar.html" %}
 
@@ -99,4 +136,18 @@
     </div>
 </div>
 <!--end 彈出視窗程式碼-->
+
+
+
+
+<script>
+    $("#login-form").submit(function (e){
+        e.preventDefault();
+        $(".uk-modal-close-default").click(); 
+        var form = this;
+        $(".kb-board-spinner").fadeIn();
+        $("#spinner-bg").fadeIn();
+        form.submit();
+    });
+</script>
 {% endblock %}
