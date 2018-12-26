@@ -43,6 +43,7 @@ class KanbanBoard(View):
             proj_data = dict()
             if project_name_id_dict != []: proj_data = project.get_board(project_id=project_list[proj_number])
             current_project_id = project_list[proj_number]
+        username = user.username
         return render(request, "board.html", locals())
 
 
@@ -55,6 +56,7 @@ class KanbanProjJSON(View):
     def get(self, request):
         data = project.get_board(project_id=project.project_id)
         return JsonResponse(data)
+
 
 '''
     PMS View
@@ -69,11 +71,12 @@ class CreateProject(View):
         return HttpResponseRedirect("/board/")
 
 
-class GetAllProjMenbers(View):
+class GetAllProjMembers(View):
     """取得專案所有成員"""
-    def get(self):
+    def get(self, request):
         members_list = project.members
         return JsonResponse(members_list, safe=False)
+
 
 '''
     TMS View
@@ -92,11 +95,18 @@ class MoveTask(View):
 
 class AddTask(View):
     """新增卡片"""
+    # def __init__(self):
+    #     super(AddTask, self).__init__()
+    #     self.
+
     def post(self, request):
         task = Task(firebase, project.project_id)
         task.add_task(request)
-        project.add_task(task.task_id, request.POST.get('columns'))
-        return HttpResponseRedirect("/board/")
+        project.add_task(task.task_id, request.POST.get('column'))
+        return JsonResponse({"task_id": task.task_id})
+
+
+
 
 class DeleteTask(View):
     """刪除卡片"""

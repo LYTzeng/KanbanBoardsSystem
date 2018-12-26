@@ -18,6 +18,8 @@
 <!--tag-it-->
 <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aehlke/tag-it@latest/css/jquery.tagit.css" charset="utf-8">
 <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aehlke/tag-it@latest/css/tagit.ui-zendesk.css" charset="utf-8">
+<!--spinner-->
+<link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/tobiasahlin/SpinKit@latest/css/spinners/9-cube-grid.css" charset="utf-8">
 <style>
     #sidenav {
         height: 100vh;
@@ -158,6 +160,12 @@
     #kb-card-color-5 {
         background-color: #c44d58;
     }
+    .kb-board-spinner {
+        transform: translate(0, 20vh);
+    }
+    .sk-cube-grid .sk-cube {
+        background-color: #40474e;
+    }
 </style>
 {% endblock %}
 
@@ -223,7 +231,19 @@
     <div id="kanban-container">
         {% if project_list %}
         <!--kanban實際位置-->
-        <div id="kanban" class="uk-container uk-padding-remove-horizontal"></div>
+        <div id="kanban" class="uk-container uk-padding-remove-horizontal">
+            <div class="sk-cube-grid kb-board-spinner">
+                <div class="sk-cube sk-cube1"></div>
+                <div class="sk-cube sk-cube2"></div>
+                <div class="sk-cube sk-cube3"></div>
+                <div class="sk-cube sk-cube4"></div>
+                <div class="sk-cube sk-cube5"></div>
+                <div class="sk-cube sk-cube6"></div>
+                <div class="sk-cube sk-cube7"></div>
+                <div class="sk-cube sk-cube8"></div>
+                <div class="sk-cube sk-cube9"></div>
+            </div>
+        </div>
         {% else %}
         <div class="uk-margin-xlarge-top">
             <div class="noto kb-first-proj-hint">Create your first project !</div>

@@ -4,18 +4,23 @@
         <legend class="uk-legend noto">Create Project</legend>
         <hr>
         {% csrf_token %}
+        <!-- <div class="uk-inline uk-margin-small uk-width-1-1 uk-margin-remove-bottom">專案名稱</div> -->
         <div class="uk-inline uk-margin-small uk-width-1-1">
-            <span class="uk-form-icon" uk-icon="icon: folder"></span>
-            <input class="uk-input" type="text" name="name" placeholder="專案名稱" required/>
+            <span>專案名稱</span>
+            <input class="uk-input" type="text" name="name" placeholder="ex.Kanban Board System" required/>
         </div>
+
         <div class="uk-inline uk-margin-small uk-width-1-1">
-            <span class="uk-form-icon" uk-icon="icon: user"></span>
-            <input class="uk-input" type="text" name="owner" placeholder="管理員" required/>
+            <span>管理員</span>
+            <input id="project-owner" class="uk-input" type="text" name="owner" placeholder="請輸入一位管理員帳號" required/>
         </div>
+
         <div class="uk-inline uk-margin-small uk-width-1-1">
-            <ul id="member-input" style="padding: 0; margin-bottom: 0;">
+            <span>加入專案成員</span>
+            <ul id="member-input" style="margin-bottom: 0;margin-top: 0;">
             </ul>
         </div>
+
         <input class="uk-button-primary uk-button uk-align-center uk-margin-small noto"
                type="submit" style="font-size: 16px; background: #139c91; color: azure;" value="建立專案"/>
     </fieldset>
@@ -36,7 +41,8 @@
             caseSensitive: true,
             allowDuplicates: false,
         });
-        $("#member-input").data("ui-tagit").tagInput.addClass('uk-input');
-        $("#member-input").data("ui-tagit").tagInput.attr('placeholder', '加入其他使用者');
+        $("#member-input").data("ui-tagit").tagInput.addClass('uk-input uk-margin-small-left');
+        $("#member-input").data("ui-tagit").tagInput.attr('placeholder', '請輸入使用者帳號');
     })
+    document.getElementById("project-owner").value = "{{ username }}";
 </script>
