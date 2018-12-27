@@ -158,7 +158,6 @@ function mainPage () {
         var dataField = {};
         var taskId = "";
         console.log("click()");
-        $(".uk-modal-close-default").click();                    
         dataField = {
             column: $("#card-column").val(),
             content: $("#card-content").val(), 

@@ -22,7 +22,7 @@
             </ul>
         </div>
 
-        <input class="uk-button-primary uk-button uk-align-center uk-margin-small noto"
+        <input id="create-project-button" class="uk-button-primary uk-button uk-align-center uk-margin-small noto"
                type="submit" style="font-size: 16px; background: #139c91; color: azure;" value="建立專案"/>
     </fieldset>
 </form>
@@ -47,4 +47,12 @@
         $(".proj-creator").removeClass("tagit-choice-editable");
     })
     document.getElementById("project-owner").value = "{{ username }}";    
+</script>
+
+<!--spinner control-->
+<script>
+$("#create-project-button").click(function(){
+    $("#page-spinner").fadeIn();
+    $("#spinner-bg").fadeIn();
+});
 </script>

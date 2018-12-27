@@ -166,6 +166,7 @@
     }
     .sk-cube-grid .sk-cube {
         background-color: #40474e;
+        z-index: 1100;
     }
     .member-tooltip {
         background:#1d1d1d;
@@ -191,10 +192,42 @@
             left:14px;
             z-index: 999999;
         }
+    #spinner-bg {
+        display:none;
+        position:fixed;
+        background-color: #fff;
+        opacity: 0.8;
+        width: 100vw;
+        height: 100vh;
+        margin: 0;
+        z-index: 1099;
+    }
+    #page-spinner {
+        position:fixed;
+        left: 50%;
+        top: 40%;
+        transform: translate(0, 20vh);
+        transform: translate(-50%, -50%);
+        z-index: 1100;
+        display: none;
+    }
 </style>
 {% endblock %}
 
 {% block mainbody %}
+<!--spinner-->
+<div id="spinner-bg"></div>
+<div id="page-spinner" class="sk-cube-grid">
+    <div class="sk-cube sk-cube1"></div>
+    <div class="sk-cube sk-cube2"></div>
+    <div class="sk-cube sk-cube3"></div>
+    <div class="sk-cube sk-cube4"></div>
+    <div class="sk-cube sk-cube5"></div>
+    <div class="sk-cube sk-cube6"></div>
+    <div class="sk-cube sk-cube7"></div>
+    <div class="sk-cube sk-cube8"></div>
+    <div class="sk-cube sk-cube9"></div>
+</div>
 <!--上方選單-->
 {% include "navbar.html" %}
 <!-- start 側邊選單 -->
@@ -204,13 +237,7 @@
         <div id="logo" class="sidenav-text">
             <img src="{% static 'media/favicon.svg' %}" style="height: 26px; transform: translate(0, -2px);">
             <b>Kanban Board</b>
-            <div uk-icon="cog" uk-toggle="target: #sign-up" class="cog" style="cursor:pointer;"></div>
-            <div id="sign-up" class="uk-flex-top noto" uk-modal>
-                <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
-                    <button class="uk-modal-close-default" type="button" uk-close></button>
-                    {% include "settings.html" %}                    
-                </div>
-            </div>
+            <div uk-icon="cog" uk-toggle="target: #settings" class="cog" style="cursor:pointer;"></div>
         </div>
     </div>
     {% if project_list %}
@@ -338,5 +365,14 @@
     </div>
 </div>
 <!-- end 建立卡片視窗 -->
+
+<!-- start 專案設定頁面 -->
+<div id="settings" class="uk-flex-top noto" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        {% include "settings.html" %}                    
+    </div>
+</div>
+<!-- end 專案設定頁面 -->
 
 {% endblock %}
