@@ -17,7 +17,6 @@
             <ul id="mgmt-member" style="margin-bottom: 0;margin-top: 0;">
                 {% for member in proj_members %}
                     <li>{{ member }}</li>
-                    <div uk-dropdown="mode: click">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.</div>
                 {% endfor %}
             </ul>
         </div>        
@@ -39,8 +38,8 @@
 <div id="delete-project-alert" uk-modal>
     <div class="uk-modal-dialog">
         <button class="uk-modal-close-default" type="button" uk-close></button>
-        <div class="uk-modal-body">
-            <p>確定要刪除專案？一經刪除將無法復原！</p>
+        <div class="uk-modal-body noto-light">
+            <p><div class="fas fa-exclamation-traingle fa-2x" style="color: #9c2813; transform: translate(0,5px);"></div> 確定要刪除專案？一經刪除將無法復原！</p>
         </div>
         <div class="uk-modal-footer uk-text-right">
             <button class="uk-button uk-button-default uk-modal-close">取消</button>

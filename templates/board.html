@@ -237,13 +237,13 @@
         <div id="logo" class="sidenav-text">
             <img src="{% static 'media/favicon.svg' %}" style="height: 26px; transform: translate(0, -2px);">
             <b>Kanban Board</b>
-            <div uk-icon="cog" uk-toggle="target: #settings" class="cog" style="cursor:pointer;"></div>
+            <div uk-toggle="target: #settings" class="fas fa-cog" style="width:20px; height: 20px; cursor:pointer; z-index: 99; margin-left: 5px;"></div>
         </div>
     </div>
     {% if project_list %}
     <!--start 專案清單-->
     <ul class="uk-nav uk-nav-default menu-block">
-        <li class="title noto-light sidenav-text">
+        <li class="title noto-light sidenav-text uk-margin-bottom">
             Projects
             <div uk-icon="plus-circle" class="uk-align-right" uk-toggle="target: #create" style="cursor:pointer;"></div>
         </li>

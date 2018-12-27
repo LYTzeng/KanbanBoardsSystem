@@ -112,17 +112,11 @@ class MoveTask(View):
 
 class AddTask(View):
     """新增卡片"""
-    # def __init__(self):
-    #     super(AddTask, self).__init__()
-    #     self.
-
     def post(self, request):
         task = Task(firebase, project.project_id)
         task.add_task(request)
         project.add_task(task.task_id, request.POST.get('column'))
         return JsonResponse({"task_id": task.task_id})
-
-
 
 
 class DeleteTask(View):
