@@ -128,6 +128,11 @@ class Project:
 
     def delete_project(self):
         self.project_document.delete()
+        for member in self.members:
+            member_doc = self.database.collection('users').document(member)
+            member_data = member_doc.get().to_dict()
+            member_data['project_list'].remove(self.project_id)
+            member_doc.update({"project_list": member_data['project_list']})
         self.__init__(self.firebase)
 
     def _member_parser(self, members_str):

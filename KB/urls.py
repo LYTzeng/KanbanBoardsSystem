@@ -37,7 +37,6 @@ urlpatterns = [
     url(r'^board/deleteTask/$', views.DeleteTask.as_view()),
     url(r'^board/deleteMember/$', views.DeleteMember.as_view()),
     url(r'^board/deleteProject/$', views.DeleteProject.as_view()),
-
 ]
 
 if not RUNNING_DEVSERVER:

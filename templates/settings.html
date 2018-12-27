@@ -1,5 +1,5 @@
-<!--/sign_up/ 是註冊頁面-->
-<form action="/#" method="POST" name="signup_form" class="uk-grid-small" uk-grid>
+<!-- start 設定頁面 -->
+<form id="settings-form" action="/#" method="POST" name="settings-form" class="uk-grid-small" uk-grid>
     <fieldset class="uk-fieldset" style="width: 100%">
         <div class="uk-margin-small-bottom"><legend class="uk-heading-bullet uk-legend noto">{{ proj_name }} 專案設定</legend></div>
 
@@ -23,8 +23,8 @@
         </div>        
         <div class="uk-heading-line uk-margin-small-top uk-text-center"><span class="uk-margin-remove-bottom" style="color: #9c2813">Danger Zone</span></div>
         <div class="uk-inline uk-margin-small uk-width-1-1" style="background-color: #dfafa7">
-            <button id="delete-project" class="uk-button uk-button-small uk-button-default uk-align-left noto uk-margin-top"
-            style="font-size: 16px; background:rgb(192, 24, 24); color:azure">
+            <button id="delete-project-button" class="uk-button uk-button-small uk-button-default uk-align-left noto uk-margin-top "
+            style="font-size: 16px; background:rgb(192, 24, 24); color:azure" uk-toggle="target: #delete-project-alert">
             Delete Project
             </button>
         </div>
@@ -33,6 +33,22 @@
 
     </fieldset>
 </form>
+<!-- end 設定頁面 -->
+
+<!-- start 刪除按鈕警告 -->
+<div id="delete-project-alert" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-body">
+            <p>確定要刪除專案？一經刪除將無法復原！</p>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button class="uk-button uk-button-default uk-modal-close">取消</button>
+            <button id="delete-project" class="uk-button uk-button-danger">刪除</button>
+        </div>
+    </div>
+</div>
+<!-- end 刪除按鈕警告 -->
 
 <script type="text/javascript">
 var projUserID = new Array();
@@ -105,5 +121,26 @@ $.getJSON("/allUserIdJSON/", function (result){
     $("#add-member").data("ui-tagit").tagInput.attr('type', 'text');
 });
 
+//-------------------------------
+// 設定 > 刪除專案 按鈕功能
+//-------------------------------
+$("#settings-form").submit( function (e) {
+    e.preventDefault();
+});
+$("#delete-project").click( function(){
+    $("#page-spinner").fadeIn();
+    $("#spinner-bg").fadeIn();
+    $.ajax({
+        method: "GET",
+        url: "/board/deleteProject/",
+        success: function(responseText){
+            document.write(responseText);
+        },
+    });
+});
 
+$(".list").click( function(){
+    $("#page-spinner").fadeIn();
+    $("#spinner-bg").fadeIn();
+})
 </script>

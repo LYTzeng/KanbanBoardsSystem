@@ -90,9 +90,9 @@ class DeleteMember(View):
 
 
 class DeleteProject(View):
-    def post(self, request):
+    def get(self, request):
         project.delete_project()
-        return HttpResponse("OK")
+        return HttpResponseRedirect("/board/")
 
 
 '''
