@@ -117,6 +117,19 @@
         <h1 class="noto uk-text-center uk-light uk-hidden@s">Kanban Board System</h1>
         <h3 class="noto uk-text-center uk-light uk-visible@s">Manage your project!</h3><br>
     </div>
+    <div class="uk-container uk-background-transparent uk-animation-fade" style="margin-top: 10%;">
+        {% if not request.session.idToken %}
+        <button class="uk-button uk-button-primary uk-align-center" style="font-size: 20px; background: #139c91; color: #ffffff;" uk-toggle="target: #sign-up">
+            Sign Up
+        </button>
+        {% else %}
+        <a href="/board/">
+            <button class="uk-button uk-button-primary uk-align-center" style="font-size: 20px; background: #139c91; color: #ffffff;">
+                進入看板
+            </button>
+        </a>
+        {% endif %}
+    </div>
 </div>
 
 {% include "navbar.html" %}

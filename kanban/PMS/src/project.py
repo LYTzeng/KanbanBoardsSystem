@@ -133,7 +133,7 @@ class Project:
             member_data = member_doc.get().to_dict()
             member_data['project_list'].remove(self.project_id)
             member_doc.update({"project_list": member_data['project_list']})
-        self.__init__(self.firebase)
+        self.reset()
 
     def _member_parser(self, members_str):
         result = [x.strip() for x in members_str.split(',')]
@@ -166,3 +166,6 @@ class Project:
             return True
         else:
             return False
+
+    def reset(self):
+        self.__init__(self.firebase)

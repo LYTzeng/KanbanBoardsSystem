@@ -19,7 +19,8 @@ class User:
         self.firebase = Firebase
         self.database = self.firebase.firestore()
         self.user_info_db = self.database.collection('users')
-        self.authentication = Pyrebase.auth()
+        self.pyrebase = Pyrebase
+        self.authentication = self.pyrebase.auth()
 
         self.user = None  # Firebase user 已註冊或登入的使用者
         self.email = None
@@ -110,6 +111,7 @@ class User:
             except:
                 print(user)
             self.user_info_db.document(self._get_username_by_email()).delete()
+            self.reset()
 
     def sign_out(self, request):
         """登出"""
@@ -118,6 +120,7 @@ class User:
             del request.session['idToken']
             del request.session['localId']
             del request.session['username']
+            self.reset()
             return request
         except Exception as e:
             raise e
@@ -196,3 +199,6 @@ class User:
         self.email = data['email']
         self.name = data['name']
         self.project_list = data['project_list']
+
+    def reset(self):
+        self.__init__(self.firebase, self.pyrebase)

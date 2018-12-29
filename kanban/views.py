@@ -28,32 +28,34 @@ class KanbanBoard(View):
     def get(self, request):
         # 驗證登入是否過期
         if 'idToken' not in request.session:
+            user.reset()
+            project.reset()
             return HttpResponseRedirect("/")
         # 刷新使用者狀態
         user.refresh()
         # 屬於user的專案列表
         project_name_id_dict = project.get_proj_name_by_id_dict(user.project_list)  # type: Dict[str, str]
         project_list = user.project_list  # type: List[str] # project id
-        if 'projNum' not in request.GET:
+        username = user.username  # 給前端使用
+        # 給名下無專案的用戶
+        if project_list == []:
+            return render(request, "board.html", locals())
+        # 給剛登入的狀態
+        elif 'projNum' not in request.GET:
             # 開啟第一個專案
             if project_name_id_dict != [] : proj_data = project.get_board(project_id=project_list[0])
             current_project_id = project_list[0]
+        # 已經查看過2個以上專案之用戶
         else:
             proj_number = int(request.GET.get('projNum'))
             proj_data = dict()
             if project_name_id_dict != []: proj_data = project.get_board(project_id=project_list[proj_number])
             current_project_id = project_list[proj_number]
         # 補充前端必要參數
-        username = user.username
         is_manager = project.is_manager(username)
         proj_members = project.members
         proj_name = project.name
         return render(request, "board.html", locals())
-
-
-class KanbanSettings(View):
-    def get(self, request):
-        return render(request, "settings.html")
 
 
 class KanbanProjJSON(View):
@@ -128,6 +130,7 @@ class DeleteTask(View):
         task.del_task()
         return HttpResponse("OK")
 
+
 '''
     UAMS View
 '''
@@ -157,6 +160,7 @@ class SignOut(View):
     """登出"""
     def get(self, request):
         user.sign_out(request)
+        project.reset()
         return HttpResponseRedirect('/')
 
 
