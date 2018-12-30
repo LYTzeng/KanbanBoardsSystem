@@ -157,7 +157,6 @@ function mainPage () {
     $("#card-submit").click( function(e) {
         var dataField = {};
         var taskId = "";
-        console.log("click()");
         dataField = {
             column: $("#card-column").val(),
             content: $("#card-content").val(), 
@@ -178,7 +177,6 @@ function mainPage () {
             datatype: "json" ,
             encode: true
         }).done( function (data) {
-            console.log("ajax.done()");
             taskId = data['task_id'];
             $('#kanban').jqxKanban('addItem', 
             { 

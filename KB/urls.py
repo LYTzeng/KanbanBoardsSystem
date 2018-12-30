@@ -22,20 +22,23 @@ from kanban import views
 RUNNING_DEVSERVER = (len(sys.argv) > 1 and sys.argv[1] == 'runserver')  # TRUE: 開發環境, FALSE: Production
 
 urlpatterns = [
-    url(r'^board/$', views.KanbanBoard.as_view()),
+    # Index
     url(r'^$', views.Index.as_view()),
     url(r'^index/(\d+)/$', views.Index.as_view()),
+    # Kanban Board Page
+    url(r'^board/$', views.KanbanBoard.as_view()),
     url(r'^KanbanProjJSON/$', views.KanbanProjJSON.as_view()),
+    # UAMS
     url(r'^login/$', views.Login.as_view()),
     url(r'^signup/', views.SignUp.as_view()),
     url(r'^signout/$', views.SignOut.as_view()),
-    url(r'^allUserIdJSON/$', views.AllUserJSON.as_view()),
+    # PMS & TMS
     url(r'^board/create/$', views.CreateProject.as_view()),
     url(r'^board/movetask/$', views.MoveTask.as_view()),
-    url(r'^board/allProjMember/$', views.GetAllProjMembers.as_view()),
     url(r"^board/addTask/$", views.AddTask.as_view()),
     url(r'^board/deleteTask/$', views.DeleteTask.as_view()),
     url(r'^board/deleteMember/$', views.DeleteMember.as_view()),
+    url(r'^board/addMember/$', views.AddMember.as_view()),
     url(r'^board/deleteProject/$', views.DeleteProject.as_view()),
 ]
 

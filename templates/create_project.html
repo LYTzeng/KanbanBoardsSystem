@@ -30,22 +30,20 @@
 
 <!--start 加入成員 tags input-->
 <script type="text/javascript">
-    var allUserID = new Array();
-    $.getJSON("/allUserIdJSON/", function(result){
-        allUserID = result;
-        $("#member-input").tagit({
-            fieldName: "members",
-            autocomplete: {delay: 0, minLength: 4, source: allUserID},
-            showAutocompleteOnFocus: false,
-            singleField: true,
-            tagLimit: null,
-            caseSensitive: true,
-            allowDuplicates: false,
-        });
-        $("#member-input").data("ui-tagit").tagInput.addClass('uk-input uk-margin-small-left');
-        $("#member-input").data("ui-tagit").tagInput.attr('placeholder', '請輸入使用者帳號');
-        $(".proj-creator").removeClass("tagit-choice-editable");
-    })
+    var allUserID = {{ all_user_id|safe }};
+    $("#member-input").tagit({
+        fieldName: "members",
+        autocomplete: {delay: 0, minLength: 4, source: allUserID},
+        showAutocompleteOnFocus: false,
+        singleField: true,
+        tagLimit: null,
+        caseSensitive: true,
+        allowDuplicates: false,
+    });
+    $("#member-input").data("ui-tagit").tagInput.addClass('uk-input uk-margin-small-left');
+    $("#member-input").data("ui-tagit").tagInput.attr('placeholder', '請輸入使用者帳號');
+    $(".proj-creator").removeClass("tagit-choice-editable");
+
     document.getElementById("project-owner").value = "{{ username }}";    
 </script>
 

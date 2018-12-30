@@ -19,8 +19,8 @@ class Project:
         self.name = None
         self.owner = None
         self.members = None
-        self.columns = {'todo': list(), 'progress': list(), 'done': list()}
-        self.attr = ['todo', 'progress', 'done']
+        self.columns = {'Todo': list(), 'In Progress': list(), 'Done': list()}
+        self.attr = ['Todo', 'In Progress', 'Done']
 
     def create(self, request):
         """建立全新專案"""
@@ -44,29 +44,33 @@ class Project:
         self.get_board(project_id=ref.id)
         self._add_project_to_user_doc()
 
-    def add_members(self, request):
+    def add_member(self, request):
         """在舊專案新增成員"""
-        members_to_add = request.POST.get('members-to-add')  # type: str
-        self.members.extend(self._member_parser(members_to_add))  # type: List[str]
+        member_to_add = request.POST.get('member-to-add')  # type: str
+        self.members.append(member_to_add)  # type: List[str]
         self.project_document.update(
             {'members': self.members}
         )
-        self._add_project_to_user_doc()
+
+        selected_user = self.database.collection('users').document(member_to_add)
+        proj_under_member = selected_user.get().to_dict()
+        proj_under_member['project_list'].append(self.project_id)
+        selected_user.update({"project_list": proj_under_member['project_list']})
 
     def delete_member(self, request):
         """在舊專案移除成員"""
         member_to_del = request.POST.get('member-to-delete')  # type: str
         selected_user = self.database.collection('users').document(member_to_del)
+        proj_under_member = selected_user.get().to_dict()
         try:
             self.members.remove(member_to_del)
-            proj_under_member = selected_user.get().to_dict()
+            self.project_document.update(
+                {'members': self.members}
+            )
             proj_under_member['project_list'].remove(self.project_id)
+            selected_user.update({"project_list": proj_under_member['project_list']})
         except ValueError:
-            return "The member has been kicked out!"
-        self.project_document.update(
-            {'members': self.members}
-        )
-        selected_user.update({"project_list": proj_under_member['project_list']})
+            print("The member has been kicked out!")
 
     def rename(self, request):
         """重新命名專案"""

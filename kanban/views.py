@@ -15,8 +15,10 @@ RUNNING_DEVSERVER = (len(sys.argv) > 1 and sys.argv[1] == 'runserver')  # TRUE: 
 firebase = Firebase(RUNNING_DEVSERVER)
 pyrebase = Pyrebase()
 user = User(firebase, pyrebase)     # 使用者物件
+# user = dict()
 global_user = GlobalUser(firebase)  # 全體使用者
 project = Project(firebase)  # 專案物件
+# project = dict()
 
 
 class Index(View):
@@ -39,6 +41,8 @@ class KanbanBoard(View):
         username = user.username  # 給前端使用
         # 給名下無專案的用戶
         if project_list == []:
+            proj_members = []
+            all_user_id = global_user.get_all_id()
             return render(request, "board.html", locals())
         # 給剛登入的狀態
         elif 'projNum' not in request.GET:
@@ -52,9 +56,11 @@ class KanbanBoard(View):
             if project_name_id_dict != []: proj_data = project.get_board(project_id=project_list[proj_number])
             current_project_id = project_list[proj_number]
         # 補充前端必要參數
-        is_manager = project.is_manager(username)
+        is_owner = project.is_manager(username)
+        owner = project.owner
         proj_members = project.members
         proj_name = project.name
+        all_user_id = global_user.get_all_id()
         return render(request, "board.html", locals())
 
 
@@ -77,17 +83,17 @@ class CreateProject(View):
         return HttpResponseRedirect("/board/")
 
 
-class GetAllProjMembers(View):
-    """取得專案所有成員"""
-    def get(self, request):
-        members_list = project.members
-        return JsonResponse(members_list, safe=False)
-
-
 class DeleteMember(View):
     """從專案移除成員"""
     def post(self, request):
         project.delete_member(request)
+        return HttpResponse("OK")
+
+
+class AddMember(View):
+    """新增成員"""
+    def post(self, request):
+        project.add_member(request)
         return HttpResponse("OK")
 
 
@@ -162,14 +168,3 @@ class SignOut(View):
         user.sign_out(request)
         project.reset()
         return HttpResponseRedirect('/')
-
-
-class AllUserJSON(View):
-    """取得所有使用者ID的JSON"""
-    def get(self, request):
-        # 全體使用者ID清單
-        all_user_id = global_user.get_all_id()  # type: List[str]
-        json = list()
-        for user_id in all_user_id:
-            json.append(user_id)
-        return JsonResponse(json, safe=False)  # type: List[str]

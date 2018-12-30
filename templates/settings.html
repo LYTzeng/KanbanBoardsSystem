@@ -8,9 +8,10 @@
         <div class="uk-inline uk-margin-small uk-width-1-1">
             <span class="noto-light">新增成員</span>
             <ul id="add-member" style="margin-bottom: 0;margin-top: 0;">
+                
             </ul>
         </div>
-        {% if is_manager  %}
+        {% if is_owner  %}
         <div class="uk-heading-line uk-margin-small-top uk-text-center"><span class="uk-margin-remove-bottom" style="color: #139c91">管理員專區</span></div>
         <div class="uk-inline uk-margin-small uk-width-1-1">
             <span class="noto-light">管理成員</span>
@@ -21,11 +22,17 @@
             </ul>
         </div>        
         <div class="uk-heading-line uk-margin-small-top uk-text-center"><span class="uk-margin-remove-bottom" style="color: #9c2813">Danger Zone</span></div>
-        <div class="uk-inline uk-margin-small uk-width-1-1" style="background-color: #dfafa7">
-            <button id="delete-project-button" class="uk-button uk-button-small uk-button-default uk-align-left noto uk-margin-top "
-            style="font-size: 16px; background:rgb(192, 24, 24); color:azure" uk-toggle="target: #delete-project-alert">
-            Delete Project
-            </button>
+        <div class="uk-inline uk-width-1-1" style="border: 1px solid red">
+            <p class="noto uk-margin-remove" style="color:#000">刪除此專案</p>
+                <div class="noto-light uk-text-small uk-margin-remove">
+                    專案一經刪除將無法復原，請注意
+                    <button id="delete-project-button" class="uk-button uk-button-small uk-button-default uk-align-right noto"
+                    style="font-size: 16px; background:transparent; color:red; vertical-align: top" uk-toggle="target: #delete-project-alert" type="delete">
+                    Delete this Project
+                    </button>
+                </div>
+            
+            
         </div>
         {% endif %}
         
@@ -50,78 +57,79 @@
 <!-- end 刪除按鈕警告 -->
 
 <script type="text/javascript">
-var projUserID = new Array();
-$.getJSON("/board/allProjMember/", function(result){
-    projUserID = result;
+var projUserID = {{ proj_members|safe }};
+var allUserID = {{ all_user_id|safe }};
+//-------------------------------
+// 設定 > 管理成員 JS
+//-------------------------------
+{% if is_owner %}
+$("#mgmt-member").tagit({
+    showAutocompleteOnFocus: false,
+    singleField: true,
+    caseSensitive: true,
+    allowDuplicates: false,
+    readOnly: true,
+    onTagClicked: function(event, ui) {
+        console.log(ui.tag.context.firstChild.data);
+        // console.log(ui.tag);
+        $(".member-tooltip").click(function(){
+            $.ajax({
+                method: "POST",
+                url: "/board/deleteMember/",
+                data: {
+                    csrfmiddlewaretoken: csrftoken,
+                    "member-to-delete": ui.tag.context.firstChild.data
+                },
+                success: function(data){
+                    $(this).parent("li").remove();
+                }
+            });
+        });
+    }
+});
+$("#mgmt-member").data("ui-tagit").tagInput.addClass('uk-input');
+$('#mgmt-member > .tagit-choice').addClass("mgmt-member-option");
+$("#mgmt-member > li").append('<div class="member-tooltip uk-inline" style="cursor: pointer;">從專案移除</div>');
+// 刪除成員的選項
+$('.mgmt-member-option').mousedown(function(){
+    var pos = $(this).position();
+    $(this).find('.member-tooltip').css('top', (pos.top)+10 + 'px').fadeIn();
+    $('.mgmt-member-option').mouseleave(function(){
+        $(this).find('.member-tooltip').fadeOut();
+    });
+});
+{% endif %}
 
-    //-------------------------------
-    // 設定 > 管理成員 JS
-    //-------------------------------
-    $("#mgmt-member").tagit({
+//-------------------------------
+// 設定 > 新增成員 JS
+//-------------------------------
+$("#add-member").tagit({
+        fieldName: "add-members",
+        autocomplete: {delay: 0, minLength: 4, source: allUserID},
         showAutocompleteOnFocus: false,
         singleField: true,
+        tagLimit: null,
         caseSensitive: true,
         allowDuplicates: false,
-        readOnly: true,
-        onTagClicked: function(event, ui) {
-            console.log(ui.tag.context.firstChild.data);
-            // console.log(ui.tag);
-            $(".member-tooltip").click(function(){
-                $.ajax({
-                    method: "POST",
-                    url: "/board/deleteMember/",
-                    data: {
-                        csrfmiddlewaretoken: csrftoken,
-                        "member-to-delete": ui.tag.context.firstChild.data
-                    },
-                    success: function(data){
-                        $(this).parent("li").remove();
-                    }
-                });
-            });
-        }
-    });
-    $("#mgmt-member").data("ui-tagit").tagInput.addClass('uk-input');
-    $('#mgmt-member > .tagit-choice').addClass("mgmt-member-option");
-    $("#mgmt-member > li").append('<div class="member-tooltip uk-inline" style="cursor: pointer;">從專案移除</div>');
-    // 刪除成員的選項
-    $('.mgmt-member-option').mousedown(function(){
-        var pos = $(this).position();
-        $(this).find('.member-tooltip').css('top', (pos.top)+10 + 'px').fadeIn();
-        $('.mgmt-member-option').mouseleave(function(){
-            $(this).find('.member-tooltip').fadeOut();
-        });
-    })
-
-
 });
-
-var allUserID = new Array();
-$.getJSON("/allUserIdJSON/", function (result){
-    allUserID = result;
-
-    //-------------------------------
-    // 設定 > 新增成員 JS
-    //-------------------------------
-    $("#add-member").tagit({
-            fieldName: "add-members",
-            autocomplete: {delay: 0, minLength: 4, source: allUserID},
-            showAutocompleteOnFocus: false,
-            singleField: true,
-            tagLimit: null,
-            caseSensitive: true,
-            allowDuplicates: false,
-    });
-    $("#add-member").data("ui-tagit").tagInput.addClass('uk-input uk-margin-small-left');
-    $("#add-member").data("ui-tagit").tagInput.attr('placeholder', '請輸欲新增的帳號');
-    $("#add-member").data("ui-tagit").tagInput.attr('required');
-    $("#add-member").data("ui-tagit").tagInput.attr('id', 'members-to-add');
-    $("#add-member").data("ui-tagit").tagInput.attr('name', 'members-to-addowner');
-    $("#add-member").data("ui-tagit").tagInput.attr('type', 'text');
+$("#add-member").data("ui-tagit").tagInput.addClass('uk-input uk-margin-small-left');
+$("#add-member").data("ui-tagit").tagInput.attr('placeholder', '請輸入欲新增的帳號');
+$("#add-member").data("ui-tagit").tagInput.attr('required');
+$("#add-member").data("ui-tagit").tagInput.attr('id', 'members-to-add');
+$("#add-member").data("ui-tagit").tagInput.attr('name', 'members-to-addowner');
+$("#add-member").data("ui-tagit").tagInput.attr('type', 'text');
+// 新增成員輸入事件
+$("#add-member").tagit({
+    afterTagAdded: function (event, ui) {
+        addMemberInput(ui.tagLabel, "added");
+    },
+    afterTagRemoved: function (event, ui) {
+        addMemberInput(ui.tagLabel, "removed");
+    }
 });
 
 //-------------------------------
-// 設定 > 刪除專案 按鈕功能
+// 設定 > 刪除專案 X按鈕功能
 //-------------------------------
 $("#settings-form").submit( function (e) {
     e.preventDefault();
@@ -138,8 +146,77 @@ $("#delete-project").click( function(){
     });
 });
 
+// 點擊側邊選單出現spinner
 $(".list").click( function(){
     $("#page-spinner").fadeIn();
     $("#spinner-bg").fadeIn();
 })
+// 阻擋enter鍵送出表單
+$(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+});
+
+//-------------------------------
+// function
+//-------------------------------
+// 新增成員 輸入或刪除成員的動作
+function addMemberInput(tagLabel, state){
+    var htmlClass = new String();
+    var htmlText = new String();
+    if (allUserID.includes(tagLabel)){
+        if (projUserID.includes(tagLabel)){
+            htmlClass = "alert";
+            htmlText = "已經是本專案成員";
+        }
+        else if (state == "removed"){
+            removeMember(tagLabel);
+            htmlClass = "removed-hint";
+            htmlText = "已移除";
+        }
+        else if (state == "added"){
+            addMember(tagLabel);
+            htmlClass = "added-hint";
+            htmlText = "已加入專案";
+        }
+    }
+    else {
+        htmlClass = "alert";
+        htmlText = "無此用戶";
+    }
+
+    html = "<p class='" 
+        + htmlClass 
+        + " noto-light uk-inline uk-text-small uk-margin-remove uk-margin-left'" 
+        + " style='color: #139c91; display: none;'>" 
+        + tagLabel + " " + htmlText +"</p>";
+    $(html).insertBefore("#add-member").fadeIn();
+    setTimeout(function(){
+        $("." + htmlClass).fadeOut(function(){$(this).remove();});
+    }, 2000)
+}
+
+// http post至後端
+function addMember(tagLabel){
+    $.ajax({
+        method: "POST",
+        url: "/board/addMember/",
+        data: {
+            csrfmiddlewaretoken: csrftoken,
+            "member-to-add": tagLabel
+        }
+    });
+}
+function removeMember(tagLabel){
+    $.ajax({
+       method: "POST",
+       url: "/board/deleteMember/",
+       data: {
+            csrfmiddlewaretoken: csrftoken,
+            "member-to-delete": tagLabel
+       }
+    });
+}
 </script>
