@@ -13,7 +13,7 @@ $.getJSON("/KanbanProjJSON/", function(projectData){
     }
     for (var i = 0 ; i < projectData['attr'].length ;i++){
         var colName = projectData['attr'][i];
-        if (colName == "progress"){
+        if (colName == "In Progress"){
             // [{ text: "...", iconClassName: "..." dataField: "..." , maxItems: 5},...]
             projectAttr.push({text: colName, dataField: colName, iconClassName: "jqx-icon-plus-alt", maxItems: 5});
         }
@@ -30,7 +30,7 @@ $.getJSON("/KanbanProjJSON/", function(projectData){
                 taskContent = projectData['tasks'][taskID]["content"];
                 taskOwner = projectData['tasks'][taskID]["owner"];
                 taskColor = projectData['tasks'][taskID]["color"];
-                taskCard.push({ id: taskID, state: colName, label: taskContent, tags: taskOwner, hex: taskColor });
+                taskCard.push({ id: taskID, resourceId: taskID, state: colName, label: taskContent, tags: taskOwner, hex: taskColor });
             }
         }
     }
@@ -84,11 +84,10 @@ function mainPage () {
         // 自訂Task卡片物件的模板
         template: "<div class='jqx-kanban-item'>"
         + "<div class='jqx-kanban-item-color-status'></div>"
-        + "<div class='jqx-icon jqx-icon-close jqx-kanban-item-template-content jqx-kanban-template-icon'></div>"
         + "<div class='jqx-kanban-item-text'></div>"
         + "<div class='jqx-kanban-item-footer'></div>"
         + "<ul class='uk-iconnav uk-position-bottom-right uk-margin-right uk-margin-small-bottom'>"
-        + "<li><div uk-icon='pencil'></div></li>"
+        // + "<li><div uk-icon='pencil'></div></li>"
         + "<li><div uk-icon='close' class='close'></div></li>"
         + "</ul>"
         + "</div>",
@@ -122,7 +121,7 @@ function mainPage () {
             element.find(".jqx-kanban-column-header-title")
             .css('height', '50px')
             .css('line-height', '50px');
-            if (column.dataField == "progress"){
+            if (column.dataField == "In Progress"){
                 // update header's status.
                 element.find(".jqx-kanban-column-header-title").html("<p style='line-height: 25px;'>" + column.text + "<br><x class='work-items'>" + columnItems + "/" + (column.maxItems-1) + "</x></p>");
                 // update collapsed header's status.
@@ -170,16 +169,16 @@ function mainPage () {
             data: {
                 csrfmiddlewaretoken: csrftoken,
                 "content": dataField.content,
-                "owner":dataField.owner, 
+                "owner":dataField.owner,
                 "color": dataField.color,
                 "column": dataField.column
             },
-            datatype: "json" ,
+            datatype: "json",
             encode: true
         }).done( function (data) {
             taskId = data['task_id'];
             $('#kanban').jqxKanban('addItem', 
-            { 
+            {
                 resourceId: taskId,
                 status: dataField.column, 
                 text: "<div id='in-card-" + taskId +"'></div>" + dataField.content, 
@@ -213,10 +212,7 @@ function mainPage () {
     //-------------------------------
     $('#kanban').on('itemMoved', function (event) {
         var args = event.args;
-        var itemId = args.itemId;
-        var oldParentId = args.oldParentId;
-        var newParentId = args.newParentId;
-        var itemData = args.itemData;
+        var itemId = args.itemData.resourceId;
         var oldColumn = args.oldColumn;
         var newColumn = args.newColumn;
         console.log(itemId, oldColumn["text"], newColumn["text"]);
@@ -238,7 +234,6 @@ function mainPage () {
                  console.log("not sent");
             }
         })
-        console.log("sent!");
     });
     //  加上卡片叉叉的功能
     for (var i = 0 ; i < taskCard.length ; i++){
