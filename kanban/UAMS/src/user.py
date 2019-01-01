@@ -28,7 +28,7 @@ class User:
         self.username = None
         self.project_list = list()
 
-        self._localId = None
+        self.localId = None
         self._idToken = None
 
     def create(self, request):
@@ -69,13 +69,14 @@ class User:
             request.session['idToken'] = self.user['idToken']  # token有時效性
             request.session['localId'] = self.user['localId']  # 唯一的User ID
             request.session['username'] = self._get_username_by_email()
-            request.session.set_expiry(1800)
+            request.session['email'] = self.email
+            # request.session.set_expiry(1800)
             # 更新Class狀態
             meta = self.user_info_db.document(self._get_username_by_email()).get().to_dict()
             self.name = meta['name']
             self.username = self._get_username_by_email()
             self.project_list = meta['project_list']
-            self._localId = self.user['localId']
+            self.localId = self.user['localId']
             self._idToken = self.user['idToken']
             return request
         else:
@@ -111,7 +112,6 @@ class User:
             except:
                 print(user)
             self.user_info_db.document(self._get_username_by_email()).delete()
-            self.reset()
 
     def sign_out(self, request):
         """登出"""
@@ -120,7 +120,7 @@ class User:
             del request.session['idToken']
             del request.session['localId']
             del request.session['username']
-            self.reset()
+            del request.session['email']
             return request
         except Exception as e:
             raise e
@@ -138,6 +138,11 @@ class User:
         self.project_list = self.get_project_list()
         self.project_list.remove(project_id)
         self.user_info_db.document(self.username).update({'project_list': self.project_list})
+
+    def rename(self, request):
+        newname = request.POST.get('newname')
+        self.user_info_db.document(self.username).update({'name': newname})
+        self.name = newname
 
     @property
     def _email_exists(self):
@@ -199,6 +204,3 @@ class User:
         self.email = data['email']
         self.name = data['name']
         self.project_list = data['project_list']
-
-    def reset(self):
-        self.__init__(self.firebase, self.pyrebase)

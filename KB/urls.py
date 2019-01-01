@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^login/$', views.Login.as_view()),
     url(r'^signup/', views.SignUp.as_view()),
     url(r'^signout/$', views.SignOut.as_view()),
+    url(r'^rename/$', views.Rename.as_view()),
     # PMS & TMS
     url(r'^board/create/$', views.CreateProject.as_view()),
     url(r'^board/movetask/$', views.MoveTask.as_view()),
