@@ -43,6 +43,7 @@ class Project:
         ref.set(project_data)
         self.get_board(project_id=ref.id)
         self._add_project_to_user_doc()
+        return ref.id
 
     def add_member(self, request):
         """在舊專案新增成員"""
@@ -137,7 +138,6 @@ class Project:
             member_data = member_doc.get().to_dict()
             member_data['project_list'].remove(self.project_id)
             member_doc.update({"project_list": member_data['project_list']})
-        self.reset()
 
     def _member_parser(self, members_str):
         result = [x.strip() for x in members_str.split(',')]
@@ -148,15 +148,6 @@ class Project:
             project_list = self.database.collection('users').document(member).get().to_dict()['project_list']
             project_list.append(self.project_id)
             self.database.collection('users').document(member).update({'project_list': project_list})
-
-    def get_proj_name_by_id_dict(self, project_ids: list):
-        if project_ids is None:
-            return None
-        names = list()
-        for id in project_ids:
-            data = self.project_collection.document(id).get().to_dict()
-            names.append({"id": id, "name": data['name']})
-        return names  # type: dict
 
     def get_project_task_ids(self):
         task_ids = self.project_document.collection("tasks").get()
@@ -171,5 +162,18 @@ class Project:
         else:
             return False
 
-    def reset(self):
-        self.__init__(self.firebase)
+
+class ProjectReader:
+    def __init__(self, Firebase):
+        self.firebase = Firebase
+        self.database = self.firebase.firestore()  # Firestore
+        self.project_collection = self.database.collection('projects')
+
+    def get_proj_name_by_id_dict(self, project_ids: list):
+        if project_ids is None:
+            return None
+        names = list()
+        for id in project_ids:
+            data = self.project_collection.document(id).get().to_dict()
+            names.append({"id": id, "name": data['name']})
+        return names  # type: dict

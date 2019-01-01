@@ -6,7 +6,7 @@
         {% csrf_token %}
         <div class="uk-child-width-1-2 uk-grid-small uk-margin-small" uk-grid>
             <div>
-                <input class="uk-input uk-first-column " type="text" name="username" placeholder="帳號" required/>
+                <input id="signup-username" class="uk-input uk-first-column " type="text" name="username" placeholder="帳號" required/>
             </div>
             <div>
                 <input class="uk-input" type="text" name="name" placeholder="名稱" required/>
@@ -14,15 +14,52 @@
         </div>
         <div class="uk-inline uk-margin-small uk-width-1-1">
             <span class="uk-form-icon" uk-icon="icon: mail"></span>
-            <input class="uk-input" type="text" name="email" placeholder="Your Email" required/>
+            <input id="signup-email" class="uk-input" type="text" name="email" placeholder="Your Email" required/>
         </div>
         <div class="uk-inline uk-margin-small uk-width-1-1">
             <span class="uk-form-icon" uk-icon="icon: lock"></span>
             <input class="uk-input" type="password" name="meema" placeholder="Password" required/>
         </div>
         <div class="uk-margin-medium">
-            <input class="uk-button uk-align-center noto"
+            <input id="signup-button" class="uk-button uk-align-center noto"
                    type="submit" style="font-size: 16px; background: #40474e; color: #ffffff" value="註冊"/>
         </div>
     </fieldset>
 </form>
+
+<script>
+    var allUserId = {{allUserId|safe}};
+    var allUserEmail = {{allUserEmail|safe}};
+    $("#signup-username").keyup(function(){
+        if(allUserId.includes($(this).val())){
+            html = "<div class='invalid-username" 
+            + " noto uk-margin-remove uk-margin-left uk-text-small'" 
+            + " style='color: red; display: none; position: relative; height: 0; top: -20px;'>" 
+            + "   此帳號已有人使用</div>";
+            $(html).insertBefore("#signup-username").fadeIn();
+            $(this).css("border-color", "red");
+            $("#signup-button").prop("disabled", true);
+        }
+        else {
+            $(".invalid-username").fadeOut(function(){$(this).remove();});
+            $(this).css("border-color", "");
+            $("#signup-button").prop("disabled", false);
+        }
+    });
+    $("#signup-email").keyup(function(){
+        if(allUserEmail.includes($(this).val())){
+            html = "<div class='invalid-email" 
+            + " noto uk-margin-remove uk-margin-left uk-text-small'" 
+            + " style='color: red; display: none; position: relative; height: 0; top: -20px;'>" 
+            + "   此信箱已有人使用</div>";
+            $(html).insertBefore("#signup-email").fadeIn();
+            $(this).css("border-color", "red");
+            $("#signup-button").prop("disabled", true);
+        }
+        else {
+            $(".invalid-email").fadeOut(function(){$(this).remove();});
+            $(this).css("border-color", "");
+            $("#signup-button").prop("disabled", false);
+        }
+    });
+</script>

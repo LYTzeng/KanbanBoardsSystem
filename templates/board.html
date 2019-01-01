@@ -23,7 +23,7 @@
         height: 100vh;
         width: 220px;
         position: fixed;
-        z-index: 1;
+        z-index: 100;
         top: 0;
         left: 0;
         background-color: #40474e;
@@ -106,7 +106,6 @@
         left: 50%;
         height: 494px;
         width: 800px;
-        /* overflow: hidden; */
         box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.116), 0 4px 10px 0 rgba(0, 0, 0, 0.089);
     }
     #kanban * {
@@ -168,6 +167,10 @@
         background-color: #40474e;
         z-index: 1100;
     }
+    #mgmt-member {
+        overflow: visible; 
+        border:none;
+    }
     .member-tooltip {
         background:#1d1d1d;
         color:#fff;
@@ -180,6 +183,7 @@
         z-index: 999999;
         opacity: 0.9;
         font-size: 14px;
+        overflow-y: visible;
     }
         .member-tooltip:before{
             content:'';
@@ -211,6 +215,18 @@
         z-index: 1100;
         display: none;
     }
+    #proj-member-list {
+        border: none;
+        top: 50vh;
+        width: 180px;
+    }
+    #proj-owner {
+        border: none;
+        top: 50vh;
+        height: 50px;
+        overflow-y: hidden;
+        margin: 0;
+    }
 </style>
 {% endblock %}
 
@@ -237,7 +253,7 @@
         <div id="logo" class="sidenav-text">
             <img src="{% static 'media/favicon.svg' %}" style="height: 26px; transform: translate(0, -2px);">
             <b>Kanban Board</b>
-            <div uk-toggle="target: #settings" class="fas fa-cog" style="width:20px; height: 20px; cursor:pointer; z-index: 99; margin-left: 5px;"></div>
+            <div uk-toggle="target: #settings" class="fas fa-cog" style="width:20px; height: 20px; cursor:pointer; margin-left: 5px;"></div>
         </div>
     </div>
     {% if project_list %}
@@ -264,6 +280,28 @@
         </li>
     </ul>
     {% endif %}
+
+    {% if project_list %}
+    <ul class="uk-nav uk-nav-default menu-block">
+            <div class="uk-heading-line uk-margin-small-top uk-text-center"><span class="uk-margin-remove-bottom noto-light" style="color: #fff;">{{proj_name}}</span></div>
+    </ul>
+    <ul class="uk-nav uk-nav-default menu-block">
+        <li class="title noto-light sidenav-text uk-margin-bottom">
+            Project Owner
+        </li>
+        <ul id="proj-owner" class="sidenav-text" style="margin-left: 15px;">
+            <li>{{ owner }}</li>
+        </ul>
+        <li class="title noto-light sidenav-text uk-margin-bottom">
+            Project Members
+        </li>
+        <ul id="proj-member-list" class="sidenav-text" style="margin-left: 15px;">
+            {% for member in proj_members %}
+                <li>{{ member }}</li>
+            {% endfor %}
+        </ul>
+    </ul>    
+    {% endif %}
 </div>
 <!--end 側邊選單-->
 
@@ -273,6 +311,7 @@
         {% if project_list %}
         <!--kanban實際位置-->
         <div id="kanban" class="uk-container uk-padding-remove-horizontal">
+            <!--loader 看板載入後會遮住-->
             <div class="sk-cube-grid kb-board-spinner">
                 <div class="sk-cube sk-cube1"></div>
                 <div class="sk-cube sk-cube2"></div>
@@ -339,6 +378,15 @@
         $('body').append(form);
         form.submit();
     }
+
+    {% if project_list %}
+        $("#proj-member-list").tagit({
+            readOnly: true,
+        });
+        $("#proj-owner").tagit({
+            readOnly: true,
+        });
+    {% endif %}
 </script>
 <!--end 側邊選單JS-->
 
@@ -350,7 +398,7 @@
 
 <!-- start 建立專案視窗 -->
 <div id="create" class="uk-flex-top noto" uk-modal>
-    <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+    <div class="uk-modal-dialog uk-margin-auto-vertical">
         <button class="uk-modal-close-default" type="button" uk-close></button>
         {% include "create_project.html" %}
     </div>
@@ -359,7 +407,7 @@
 
 <!-- start 建立卡片視窗 -->
 <div id="new-card" class="uk-flex-top noto" uk-modal>
-    <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+    <div class="uk-modal-dialog uk-margin-auto-vertical">
         <button class="uk-modal-close-default" type="button" uk-close></button>
         {% include "create_card.html" %}
     </div>
@@ -367,10 +415,12 @@
 <!-- end 建立卡片視窗 -->
 
 <!-- start 專案設定頁面 -->
-<div id="settings" class="uk-flex-top noto" uk-modal>
-    <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+<div id="settings" class="uk-flex-top noto uk-modal-container" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-inline">
         <button class="uk-modal-close-default" type="button" uk-close></button>
-        {% include "settings.html" %}                    
+        <div class="uk-grid-divider uk-child-width-1-2" uk-grid>
+            {% include "settings.html" %}  
+        </div>                          
     </div>
 </div>
 <!-- end 專案設定頁面 -->

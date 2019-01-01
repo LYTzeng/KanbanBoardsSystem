@@ -1,11 +1,13 @@
 <!--start form 建立卡片-->
+<div class="uk-modal-header">
+    <h4 class="noto uk-modal-title uk-legend">New Card</h4>
+</div>
+<div class="uk-modal-body">
 <form id="create-card-form" action="/board/addTask/" method="POST" name="create" class="uk-grid-small" uk-grid>
     <fieldset class="uk-fieldset">
-        <legend class="uk-legend noto">New Card</legend>
-        <hr>
         {% csrf_token %}
         <div class="uk-inline uk-margin-small uk-width-1-1">
-            <span>新增專案至</span>
+            <span>新增卡片至</span>
             <input id="card-column" class="uk-input" type="text" name="columns" required readonly/>
         </div>
         <div class="uk-inline uk-margin-small uk-width-1-1">
@@ -36,6 +38,7 @@
     </fieldset>
 
 </form>
+</div>
 <!--end form 建立卡片-->
 
 <script type="text/javascript">

@@ -1,4 +1,5 @@
-<!-- start 設定頁面 -->
+<!-- start 專案設定頁面 -->
+<div>
 <form id="settings-form" action="/#" method="POST" name="settings-form" class="uk-grid-small" uk-grid>
     <fieldset class="uk-fieldset" style="width: 100%">
         <div class="uk-margin-small-bottom"><legend class="uk-heading-bullet uk-legend noto">{{ proj_name }} 專案設定</legend></div>
@@ -21,25 +22,60 @@
                 {% endfor %}
             </ul>
         </div>        
-        <div class="uk-heading-line uk-margin-small-top uk-text-center"><span class="uk-margin-remove-bottom" style="color: #9c2813">Danger Zone</span></div>
-        <div class="uk-inline uk-width-1-1" style="border: 1px solid red">
-            <p class="noto uk-margin-remove" style="color:#000">刪除此專案</p>
+        <div class="uk-inline uk-width-1-1">
+            <span class="noto-light">刪除此專案</span>
                 <div class="noto-light uk-text-small uk-margin-remove">
                     專案一經刪除將無法復原，請注意
                     <button id="delete-project-button" class="uk-button uk-button-small uk-button-default uk-align-right noto"
-                    style="font-size: 16px; background:transparent; color:red; vertical-align: top" uk-toggle="target: #delete-project-alert" type="delete">
+                    style="font-size: 16px; background:transparent; color: #bb2f16; vertical-align: top" uk-toggle="target: #delete-project-alert" type="delete">
                     Delete this Project
                     </button>
-                </div>
-            
-            
+                </div>                        
         </div>
         {% endif %}
         
 
     </fieldset>
 </form>
-<!-- end 設定頁面 -->
+</div>
+<!-- end 專案設定頁面 -->
+
+<!-- start 帳號設定頁面 -->
+<div>
+<form id="account-settings-form" action="/#" method="POST" name="settings-form" class="uk-grid-small" uk-grid>
+    <fieldset class="uk-fieldset" style="width: 100%">
+        <div class="uk-margin-small-bottom"><legend class="uk-heading-bullet uk-legend noto">帳號設定</legend></div>
+
+        {% csrf_token %}
+        <div class="uk-inline uk-margin-small uk-width-1-1">
+            <span id="rename-title" class="noto-light">變更名稱</span><br>
+            <input class="uk-input uk-width-2-3" type="text" value="{{name}}" name="newname"/>
+            <button id="rename" class="uk-button">更改</button>
+        </div>
+
+        <div class="uk-heading-line uk-margin-small-top uk-text-center"><span class="uk-margin-remove-bottom" style="color: #139c91">帳號資訊</span></div>
+        <div class="uk-margin-small uk-width-1-1 uk-grid-collapse uk-child-width-1-2 noto-light" uk-grid>
+            <div>
+                <ul class="uk-list">
+                    <li>帳號</li>
+                    <li>名稱</li>
+                    <li>信箱</li>
+                    <li>uid</li>
+                </ul>
+            </div>
+            <div>
+                <ul class="uk-list">
+                    <li>{{username}}</li>
+                    <li id="name">{{name}}</li>
+                    <li>{{email}}</li>
+                    <li>{{localId}}</li>
+                </ul>
+            </div>
+        </div>        
+    </fieldset>
+</form>
+</div>
+<!-- end 帳號設定頁面 -->
 
 <!-- start 刪除按鈕警告 -->
 <div id="delete-project-alert" uk-modal>
@@ -70,21 +106,10 @@ $("#mgmt-member").tagit({
     allowDuplicates: false,
     readOnly: true,
     onTagClicked: function(event, ui) {
-        console.log(ui.tag.context.firstChild.data);
-        // console.log(ui.tag);
+        $(".member-tooltip").off("click");
         $(".member-tooltip").click(function(){
-            $.ajax({
-                method: "POST",
-                url: "/board/deleteMember/",
-                data: {
-                    csrfmiddlewaretoken: csrftoken,
-                    "member-to-delete": ui.tag.context.firstChild.data
-                },
-                success: function(data){
-                    $(this).parent("li").remove();
-                }
-            });
-        });
+            mgmtMemberInput(ui.tag.context.firstChild.data);
+        }); 
     }
 });
 $("#mgmt-member").data("ui-tagit").tagInput.addClass('uk-input');
@@ -104,13 +129,13 @@ $('.mgmt-member-option').mousedown(function(){
 // 設定 > 新增成員 JS
 //-------------------------------
 $("#add-member").tagit({
-        fieldName: "add-members",
-        autocomplete: {delay: 0, minLength: 4, source: allUserID},
-        showAutocompleteOnFocus: false,
-        singleField: true,
-        tagLimit: null,
-        caseSensitive: true,
-        allowDuplicates: false,
+    fieldName: "add-members",
+    autocomplete: {delay: 0, minLength: 4, source: allUserID},
+    showAutocompleteOnFocus: false,
+    singleField: true,
+    tagLimit: null,
+    caseSensitive: true,
+    allowDuplicates: false,
 });
 $("#add-member").data("ui-tagit").tagInput.addClass('uk-input uk-margin-small-left');
 $("#add-member").data("ui-tagit").tagInput.attr('placeholder', '請輸入欲新增的帳號');
@@ -122,9 +147,13 @@ $("#add-member").data("ui-tagit").tagInput.attr('type', 'text');
 $("#add-member").tagit({
     afterTagAdded: function (event, ui) {
         addMemberInput(ui.tagLabel, "added");
+        $("#proj-member-list").append('<li class="tagit-choice ui-widget-content ui-state-default ui-corner-all tagit-choice-read-only"><span class="tagit-label">' + ui.tagLabel + '</span><input type="hidden" value="' + ui.tagLabel + '" name="tags" class="tagit-hidden-field"></li>')
+        $("#proj-member-list > .tagit-new").remove();
     },
     afterTagRemoved: function (event, ui) {
         addMemberInput(ui.tagLabel, "removed");
+        $("li:contains('" + ui.tagLabel +"')").remove();
+        $("#proj-member-list > .tagit-new").remove();
     }
 });
 
@@ -219,4 +248,72 @@ function removeMember(tagLabel){
        }
     });
 }
+
+// 管理成員 輸入或刪除成員的動作
+function mgmtMemberInput(context){
+    if (context != "{{ owner }}"){
+        $.ajax({
+            method: "POST",
+            url: "/board/deleteMember/",
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                "member-to-delete": context
+            },
+            success: function(data){
+                $("li:contains('" + context +"')").remove();
+                html = "<p class='deleted" 
+                + " noto-light uk-inline uk-text-small uk-margin-remove uk-margin-left'" 
+                + " style='color: #139c91; display: none;'>" 
+                + context + " 已踢出專案</p>";
+                insertDelAlert(html);
+            }
+        });
+        
+    }
+    else {
+        html = "<p class='deleted" 
+        + " noto-light uk-inline uk-text-small uk-margin-remove uk-margin-left'" 
+        + " style='color: #c44d58; display: none;'>" 
+        + context + " 是管理員，不能移除</p>";
+        insertDelAlert(html);
+    }
+
+
+}
+
+function insertDelAlert(html){
+    $(html).insertBefore("#mgmt-member").fadeIn();
+    setTimeout(function(){
+        $(".deleted").fadeOut(function(){$(this).remove();});
+    }, 2000)
+}
+
+//-------------------------------
+// 帳號設定
+//-------------------------------
+$("#account-settings-form").submit( function(e){
+    e.preventDefault();
+});
+$("#rename").click(function(e){
+    newname = $("input[name=newname]").val();
+    $.ajax({
+        method: "POST",
+        url: "/rename/",
+        data: {
+            csrfmiddlewaretoken:csrftoken,
+            "newname": newname
+        }  
+    }).done(function(data){
+        html = "<div class='rename-success" 
+            + " noto-light uk-inline uk-text-small uk-margin-remove uk-margin-left'" 
+            + " style='color: #139c91; display: none;'>" 
+            + "   已變更</div>";
+        $(html).insertAfter("#rename-title").fadeIn();
+        setTimeout(function(){
+            $(".rename-success").fadeOut(function(){$(this).remove();});
+        }, 2000)
+        $("#name").text(newname);
+    });
+
+});
 </script>
