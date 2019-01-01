@@ -1,5 +1,5 @@
 
-# :construction_worker:開發中 KanbanBoardsSystem
+# KanbanBoardsSystem
 An implementation of Kanban method based on Django web application.
 
 ~~很抱歉這其實不算是README 主要是讓組員更了解專案((希望(((被K><~~
