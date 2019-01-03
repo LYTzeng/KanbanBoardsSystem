@@ -83,34 +83,13 @@ class User:
             message = "Unknown Error"
             return message
 
-    def authorize(self, request):
-        """驗證使用者，未登入者限制權限"""
-        current_user = self.authentication.current_user
-        if current_user is None:
-            return False
-        localId_real = current_user['localId']
-        localId_session = request.session['localId']
-        token_real = current_user['idToken']
-        token_session = request.session['idToken']
-        EXPIRED = False
-        try:
-            self.authentication.get_account_info(token_session)
-        except Exception:
-            EXPIRED = True
-        if not EXPIRED and localId_real == localId_session and token_real == token_session:
-            self.authentication.refresh(current_user['refreshToken'])
-            return True
-        else:
-            return False
-
-    def delete_user(self, request):
+    def delete_user(self):
         """刪除帳號"""
-        user = self.login(request)
         if self._email_exists:
             try:
-                self.firebase.auth().delete_user(user.session['localId'])
-            except:
-                print(user)
+                self.firebase.auth().delete_user(self.localId)
+            finally:
+                pass
             self.user_info_db.document(self._get_username_by_email()).delete()
 
     def sign_out(self, request):
@@ -124,20 +103,6 @@ class User:
             return request
         except Exception as e:
             raise e
-
-    def join_project(self, project_id):
-        """用戶加入專案"""
-        self.project_list = self.get_project_list()
-        self.project_list.append(project_id)
-        self.user_info_db.document(self.username).update({'project_list': self.project_list})
-
-    def resign_project(self, project_id):
-        """用戶退出專案"""
-        if self.is_owner(project_id) or not self.is_member(project_id):
-            return
-        self.project_list = self.get_project_list()
-        self.project_list.remove(project_id)
-        self.user_info_db.document(self.username).update({'project_list': self.project_list})
 
     def rename(self, request):
         newname = request.POST.get('newname')
