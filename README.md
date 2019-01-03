@@ -3,6 +3,13 @@
 An implementation of Kanban method based on Django web application.
 
 ~~很抱歉這其實不算是README 主要是讓組員更了解專案((希望(((被K><~~
+## 注意事項
+  如果需要執行專案，請先開通GCP的firebase，將API key以Dictionary的形式放入`kanban\firebase\FirebaseAPIKey.py`中
+  `FirebaseAPIKey.py`中會有一個get() function回傳API Key 的Dictionary型別資料
+  
+  另外需要Firebase credentials，是一個JSON檔，將其路徑貼在`kanban\firebase\setup.py`中的第13行
+  詳細自己看吧 <https://firebase.google.com/docs/admin/setup>
+  
 
 ## 測試方法
 - 單元測試 
@@ -43,12 +50,16 @@ An implementation of Kanban method based on Django web application.
 │  │  ├─src
 │  │  │  │  project.py
 │  ├─TMS	任務管理子系統
+│  │  └─src
+│  │      │  task.py
 │  ├─UAMS	使用者管理子系統
 │  │  ├─src
+│  │  │  │  collection.py
 │  │  │  │  user.py
 │  ├─testing 測試和測資放這
 │  │  │  mock.py
 │  │  │  pms_test.py
+│  │  │  tms_test.py
 │  │  │  uams_test.py
 ├─KB	主要是Django框架會用到的必要設定
 │  │  settings.py	環境變數
@@ -78,6 +89,11 @@ An implementation of Kanban method based on Django web application.
 │          favicon.svg
 └─templates	Django Template 就是前端的HTML和模板語言
     │  board.html
+    │  create_card.html
+    │  create_project.html
+    │  index.html
+    │  login.html
+    │  navbar.html
     │  settings.html
     │  sign_up.html
     ├─basic
