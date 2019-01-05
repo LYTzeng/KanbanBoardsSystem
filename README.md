@@ -74,6 +74,7 @@ An implementation of Kanban method based on Django web application.
 │  │          │
 │  │          └─images
 │  │                  圖片
+│  │  └─kb 自己寫的CSS   
 │  ├─js		放JS第一層目錄的都是現成的框架
 │  │  │  d3-scale-chromatic.v1.min.js
 │  │  │  d3.v4.min.js
@@ -98,8 +99,6 @@ An implementation of Kanban method based on Django web application.
     │  sign_up.html
     ├─basic
     │      basic.html	模板基底，所有頁面共通使用
-    └─css
-        └─kb
 ```
 
   
