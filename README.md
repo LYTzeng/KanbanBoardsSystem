@@ -67,13 +67,13 @@ An implementation of Kanban method based on Django web application.
 │  │  wsgi.py		wsgi server
 ├─static	放靜態檔 如圖片、JS、CSS等
 │  ├─css
-│  │  └─jqwidgets	jqwidgets的配色 用在看板色彩主題
-│  │      └─styles
-│  │          │  jqx.base.css
-│  │          │  jqx.light.css
-│  │          │
-│  │          └─images
-│  │                  圖片
+│  │  ├─jqwidgets	jqwidgets的配色 用在看板色彩主題
+│  │  │   └─styles
+│  │  │       │  jqx.base.css
+│  │  │       │  jqx.light.css
+│  │  │       │
+│  │  │       └─images
+│  │  │               圖片
 │  │  └─kb 自己寫的CSS   
 │  ├─js		放JS第一層目錄的都是現成的框架
 │  │  │  d3-scale-chromatic.v1.min.js
@@ -97,8 +97,8 @@ An implementation of Kanban method based on Django web application.
     │  navbar.html
     │  settings.html
     │  sign_up.html
-    ├─basic
-    │      basic.html	模板基底，所有頁面共通使用
+    └─basic
+        └─basic.html	模板基底，所有頁面共通使用
 ```
 
   
