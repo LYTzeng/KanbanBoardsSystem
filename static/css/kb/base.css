@@ -1,0 +1,96 @@
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+/* 全域CSS定義 */
+a:link {
+    text-decoration: none;
+}
+a:visited {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: none;
+}
+a:active {
+    text-decoration: none;
+}
+/* 在所不惜，思源黑體 */
+@font-face {
+    font-family: 'Noto Sans TC';
+    font-style: normal;
+    font-weight: 400;
+    src: url(//fonts.gstatic.com/ea/notosanstc/v1/NotoSansTC-Regular.woff2) format('woff2'),
+        url(//fonts.gstatic.com/ea/notosanstc/v1/NotoSansTC-Regular.woff) format('woff'),
+        url(//fonts.gstatic.com/ea/notosanstc/v1/NotoSansTC-Regular.otf) format('opentype');
+}
+@font-face {
+    font-family: 'Noto Sans TC Light';
+    font-style: normal;
+    font-weight: 300;
+    src: url(//fonts.gstatic.com/ea/notosanstc/v1/NotoSansTC-Light.woff2) format('woff2'),
+       url(//fonts.gstatic.com/ea/notosanstc/v1/NotoSansTC-Light.woff) format('woff'),
+       url(//fonts.gstatic.com/ea/notosanstc/v1/NotoSansTC-Light.otf) format('opentype');
+}
+.noto {
+    font-family: "Noto Sans TC", sans-serif !important;
+}
+.noto-light{
+    font-family: "Noto Sans TC Light", sans-serif !important;
+}
+#bg-img {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: -50px;
+    z-index: -99;
+    background-repeat:no-repeat;
+    background-position: center top;
+    width: auto;
+    height: 100vh; 
+    display: block;
+    background-color: #f6f7f6;       
+    background-image: url('http://www.cncs.com.uy/content/uploads/fondo1.jpg');
+    background-size: cover;
+    filter: brightness(1) grayscale(1) contrast(120%);
+    opacity: .3;
+}
+.kb-menu-button-text {
+    font-size: 16px;
+    color: azure;
+    background-color: transparent;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor:pointer;
+}
+    .kb-menu-button-text :hover {
+        text-decoration: line-through;
+        text-decoration-color: azure;
+    }
+#navbar {
+    height: 30px;
+    width: 100vw;
+    background: transparent;
+    z-index: 99;
+    top: 0;
+    left: 0;
+    position: fixed;
+    color:azure;
+}
+    #navbar ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        margin-right: 10px;
+        padding-right: 5px;
+    }
+        #navbar ul li {
+            display: block;
+            text-align: center;
+            float: right;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-top: 5px;
+        }
+        
