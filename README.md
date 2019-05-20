@@ -1,5 +1,11 @@
 
 # KanbanBoardsSystem
+![contributers](https://img.shields.io/github/contributors/LYTzeng/KanbanBoardsSystem.svg?style=flat-square)
+![django version](https://img.shields.io/badge/version-1.8.19-blue.svg?style=flat-square&logo=django)
+![pytohn versions](https://img.shields.io/pypi/pyversions/django.svg?style=flat-square)
+<a href="http://www.djangoproject.com/"><img src="https://www.djangoproject.com/m/img/badges/djangomade124x25.gif" border="0" alt="Made with Django." title="Made with Django." /></a>
+![Inactive](https://img.shields.io/badge/repo%20status-inactive-yellowgreen.svg?style=flat-square)
+\
 An implementation of Kanban method based on Django web application.
 
 ~~很抱歉這其實不算是README 主要是讓組員更了解專案((希望(((被K><~~
