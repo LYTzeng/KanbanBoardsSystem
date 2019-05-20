@@ -1,5 +1,6 @@
 
 # KanbanBoardsSystem
+![course proj](https://img.shields.io/badge/course%20project-2018%20%E8%BB%9F%E5%B7%A5-green.svg?style=flat-square)
 ![contributers](https://img.shields.io/github/contributors/LYTzeng/KanbanBoardsSystem.svg?style=flat-square)
 ![django version](https://img.shields.io/badge/version-1.8.19-blue.svg?style=flat-square&logo=django)
 ![pytohn versions](https://img.shields.io/pypi/pyversions/django.svg?style=flat-square)
